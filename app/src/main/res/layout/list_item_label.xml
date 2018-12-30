@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+>
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:orientation="vertical"
+    >
+
+        <TextView
+                android:id="@+id/type"
+                android:text="屏类型"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+        />
+        <TextView
+                android:id="@+id/size"
+                android:text="宽X高"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="64sp"
+                app:layout_constraintLeft_toRightOf="@id/type"
+                app:layout_constraintTop_toTopOf="@id/type"
+        />
+
+
+        <TextView
+                android:id="@+id/power"
+                android:text="电量"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toRightOf="@id/state"
+                app:layout_constraintTop_toTopOf="@id/state"
+                android:layout_marginLeft="64sp"
+        />
+        <TextView
+                android:id="@+id/state"
+                android:text="状态（是否绑定）"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/type"
+   />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v7.widget.CardView>

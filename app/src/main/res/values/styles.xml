@@ -1,11 +1,15 @@
-<resources>
-
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="QMUI.Compat">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="AppTheme" parent="QMUI.Compat.NoActionBar">
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
+    </style>
+    <style name="home_button" parent="@style/Button.Compat">
+        <item name="android:layout_margin">2dp</item>
+    </style>
+    <style name="attr_text">
+        <item name="android:textColorHint">@android:color/darker_gray</item>
+        <item name="colorControlNormal">@android:color/darker_gray</item>
+        <item name="colorControlActivated">@android:color/darker_gray</item>
     </style>
 
 </resources>

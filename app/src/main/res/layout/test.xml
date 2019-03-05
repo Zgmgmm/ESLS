@@ -21,19 +21,18 @@
             android:paddingBottom="4dp"
             android:background="@color/qmui_config_color_white"
             app:iconifiedByDefault="false"
+            android:focusedByDefault="false"
             app:queryHint="商品条码/名字/供应商"
     />
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
             android:id="@+id/refreshLayout"
-            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-    >
-        <dev.zgmgmm.esls.widget.RecyclerView
+            android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/recyclerView">
-        </dev.zgmgmm.esls.widget.RecyclerView>
+                android:overScrollMode="never"
+                android:background="#fff"/>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-
 </LinearLayout>

@@ -11,22 +11,24 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
-
     >
 
-        <activity android:name=".LoginActivity">
+        <activity android:name="dev.zgmgmm.esls.activity.LoginActivity">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="android.intent.action.VIEW"/>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
-        <activity android:name=".HomeActivity"/>
-        <activity android:name=".GoodManageActivity"/>
-        <activity android:name=".GoodInfoActivity"/>
-        <activity android:name=".LabelManageActivity"/>
-        <activity android:name=".LabelInfoActivity"/>
-        <activity android:name=".BindActivity"/>
+        <activity android:name="dev.zgmgmm.esls.activity.HomeActivity"/>
+        <activity android:name="dev.zgmgmm.esls.activity.GoodQueryActivity"/>
+        <activity android:name="dev.zgmgmm.esls.activity.GoodInfoActivity"/>
+        <activity android:name="dev.zgmgmm.esls.activity.LabelQueryActivity"/>
+        <activity android:name="dev.zgmgmm.esls.activity.LabelInfoActivity"/>
+        <activity android:name="dev.zgmgmm.esls.activity.BindActivity"/>
+        <activity android:name="dev.zgmgmm.esls.activity.ServerConfigActivity"/>
+        <activity android:name="dev.zgmgmm.esls.activity.LabelListActivity"/>
+        <!--<activity android:name="dev.zgmgmm.esls.TestActivity"/>-->
     </application>
 
 </manifest>

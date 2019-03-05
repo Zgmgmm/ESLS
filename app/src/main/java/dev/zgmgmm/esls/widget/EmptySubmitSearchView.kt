@@ -1,18 +1,18 @@
-package dev.zgmgmm.esls.ui
+package dev.zgmgmm.esls.widget
 
 import android.content.Context
 import android.support.v7.widget.SearchView
 import android.util.AttributeSet
 
+/**
+ * Created by: Jens Klingenberg (jensklingenberg.de)
+ * GPLv3
+ *
+ *  This SearchView gets triggered even when the query submit is empty
+ *
+ * */
 class EmptySubmitSearchView : SearchView {
 
-    /*
-* Created by: Jens Klingenberg (jensklingenberg.de)
-* GPLv3
-*
-*   //This SearchView gets triggered even when the query submit is empty
-*
-* */
 
     lateinit var mSearchSrcTextView: SearchView.SearchAutoComplete
     lateinit var listener: SearchView.OnQueryTextListener
@@ -31,5 +31,9 @@ class EmptySubmitSearchView : SearchView {
             listener.onQueryTextSubmit(query.toString())
             true
         }
+    }
+
+    fun setText(text: CharSequence) {
+        mSearchSrcTextView.setText(text)
     }
 }

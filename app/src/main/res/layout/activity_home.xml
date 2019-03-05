@@ -1,22 +1,30 @@
 <android.support.constraint.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
 >
-
-
+    <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:title="ESLS"
+            app:titleTextColor="#fff"
+            app:navigationIcon="@drawable/qmui_icon_topbar_back"
+            />
     <android.support.v7.widget.CardView
             android:id="@+id/good_manage"
             android:orientation="vertical"
-            android:layout_width="156dp"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="4dp"
-            app:cardCornerRadius="2dp"
+            app:layout_constraintHorizontal_weight="1"
             app:layout_constraintDimensionRatio="H,1:1"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            style="@style/home_button"
+            app:cardCornerRadius="2dp">
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -27,7 +35,7 @@
             />
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="商品信息"
+                      android:text="商品查询"
                       android:layout_centerInParent="true"
             />
         </LinearLayout>
@@ -37,26 +45,26 @@
     <android.support.v7.widget.CardView
             android:id="@+id/label_manage"
             android:orientation="vertical"
-            android:layout_width="156dp"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="4dp"
-            app:cardCornerRadius="2dp"
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintDimensionRatio="H,1:1"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="@id/guideline"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            style="@style/home_button"
+            app:cardCornerRadius="2dp">
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center">
             <ImageView android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:src="@drawable/ic_shopping_cart"
+                       android:src="@drawable/ic_label"
             />
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="标签操作"
+                      android:text="标签查询"
                       android:layout_centerInParent="true"
             />
 
@@ -66,21 +74,22 @@
     <android.support.v7.widget.CardView
             android:id="@+id/bind"
             android:orientation="vertical"
-            android:layout_width="156dp"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="4dp"
-            app:cardCornerRadius="2dp"
+            app:layout_constraintHorizontal_weight="1"
             app:layout_constraintDimensionRatio="H,1:1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/good_manage"
-            app:layout_constraintEnd_toStartOf="@id/guideline">
+            app:layout_constraintEnd_toStartOf="@id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/good_manage"
+            style="@style/home_button"
+            app:cardCornerRadius="2dp">
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center">
             <ImageView android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:src="@drawable/ic_label"
+                       android:src="@drawable/ic_bind"
             />
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
@@ -94,14 +103,15 @@
     <android.support.v7.widget.CardView
             android:id="@+id/logout"
             android:orientation="vertical"
-            android:layout_width="156dp"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="4dp"
-            app:cardCornerRadius="2dp"
+            app:layout_constraintHorizontal_weight="1"
             app:layout_constraintDimensionRatio="H,1:1"
             app:layout_constraintTop_toBottomOf="@id/label_manage"
             app:layout_constraintStart_toStartOf="@id/guideline"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            style="@style/home_button"
+            app:cardCornerRadius="2dp">
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

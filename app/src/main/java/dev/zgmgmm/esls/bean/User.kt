@@ -1,6 +1,6 @@
 package dev.zgmgmm.esls.bean
 
 data class User(
-    var user:String,
-    var password:String
+    var name: String,
+    var password: String
 )

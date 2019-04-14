@@ -7,15 +7,13 @@ import retrofit2.http.*
 interface Service {
 
     // 登录
-    @FormUrlEncoded
-//    @POST("login")
-    @POST("login")
-    fun login(@Field("user") user: String, @Field("password") password: String): Observable<Response<User>>
+    @POST("user/login")
+    fun login(@Body user: User): Observable<Response<UserInfo>>
 
 
     // 查询指定ID商品
     @GET("goods/{id}")
-    fun good(@Path("id") id: String): Observable<Response<Good>>
+    fun good(@Path("id") id: String): Observable<Response<List<Good>>>
 
 
     // 根据条件查询商品
@@ -30,12 +28,14 @@ interface Service {
     @POST("goods/search")
     fun searchGood(@Query("connection") connecion: String, @Query("page") page: Int, @Query("count") count: Int, @Body requestBean: RequestBean): Observable<Response<List<Good>>>
 
+    @PUT("good/update")
+    fun goodUpdate(@Body requestBean: RequestBean ): Observable<Response<Stat>>
 
     @POST("good")
     fun good(@Body good: Good): Observable<Response<Good>>
 
     @GET("tags/{id}")
-    fun tag(@Path("id") id: String): Observable<Response<Label>>
+    fun tag(@Path("id") id: String): Observable<Response<List<Label>>>
 
     @POST("tags/search")
     fun searchTag(@Query("connection") connecion: String, @Query("page") page: Int?, @Query("count") count: Int?, @Body requestBean: RequestBean): Observable<Response<List<Label>>>
@@ -52,8 +52,8 @@ interface Service {
      *  DO_BY_ROUTER = 1;
      *  DO_BY_CYCLE = 2;
      */
-    @PUT("tag/update")
-    fun updateTag(@Query("mode") mode: Int, @Body requestBean: RequestBean): Observable<Response<Stat>>
+    @PUT("tag/flush")
+    fun flush(@Query("mode") mode: Int, @Body requestBean: RequestBean): Observable<Response<Stat>>
 
     /**
      *  DO_BY_TAG = 0;

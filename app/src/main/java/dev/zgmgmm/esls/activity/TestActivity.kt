@@ -15,8 +15,8 @@ import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener
 import dev.zgmgmm.esls.ESLS
 import dev.zgmgmm.esls.Mock
 import dev.zgmgmm.esls.R
-import dev.zgmgmm.esls.TipDialogUtil
 import dev.zgmgmm.esls.bean.Good
+import dev.zgmgmm.esls.showSuccessTipDialog
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.test.*
@@ -97,9 +97,9 @@ class TestActivity : AppCompatActivity(), OnLoadMoreListener {
                 data.clear()
                 data.addAll(goods)
                 adapter.notifyDataSetChanged()
-                TipDialogUtil.showTipDialog(this, "查询成功", QMUITipDialog.Builder.ICON_TYPE_SUCCESS)
+                showSuccessTipDialog("查询成功")
             }, {
-                TipDialogUtil.showTipDialog(this, "查询失败", QMUITipDialog.Builder.ICON_TYPE_FAIL)
+                RequestExceptionHandler.handle(this, it)
             })
 
     }

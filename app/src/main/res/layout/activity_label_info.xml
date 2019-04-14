@@ -28,11 +28,23 @@
                     android:theme="@style/attr_text"
             >
                 <android.support.design.widget.TextInputEditText
-                        android:id="@+id/id"
+                        android:id="@+id/barcode"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:tag="label_attr"
-                        android:hint="ID"/>
+                        android:hint="条码"/>
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/attr_text"
+            >
+                <android.support.design.widget.TextInputEditText
+                        android:id="@+id/size"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:tag="label_attr"
+                        android:hint="宽x高"/>
             </android.support.design.widget.TextInputLayout>
             <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -67,6 +79,16 @@
                         android:layout_height="wrap_content"
                         android:hint="绑定状态"/>
             </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/attr_text">
+                <android.support.design.widget.TextInputEditText
+                        android:id="@+id/good"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="绑定商品"/>
+            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
     </ScrollView>
 
@@ -89,7 +111,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>
-
     </LinearLayout>
 
     <LinearLayout

@@ -23,6 +23,8 @@ data class Label(
     var routerId: String? = ""
 ) : Serializable {
     fun isBound(): Boolean {
-        return goodId?.equals(0) ?: (false)
+        if(goodId==null)
+            return false
+        return !goodId.equals("0")
     }
 }

@@ -21,15 +21,13 @@
                 app:layout_constraintTop_toTopOf="parent">
         </TextView>
 
-
         <TextView
                 android:id="@+id/provider"
                 android:text="供应商"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintLeft_toRightOf="@id/name"
-                app:layout_constraintTop_toTopOf="@id/name"
-                android:layout_marginLeft="64sp"/>
+                app:layout_constraintLeft_toLeftOf="@id/name"
+                app:layout_constraintTop_toBottomOf="@id/name"/>
 
 
         <TextView
@@ -38,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/name"
+                app:layout_constraintTop_toBottomOf="@id/provider"
         />
         <TextView
                 android:id="@+id/price"

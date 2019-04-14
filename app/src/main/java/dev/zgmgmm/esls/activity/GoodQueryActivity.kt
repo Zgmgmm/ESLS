@@ -13,11 +13,11 @@ import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener
 import dev.zgmgmm.esls.ESLS
 import dev.zgmgmm.esls.R
-import dev.zgmgmm.esls.TipDialogUtil
 import dev.zgmgmm.esls.adapter.GoodListAdapter
 import dev.zgmgmm.esls.base.BaseActivity
 import dev.zgmgmm.esls.bean.Good
 import dev.zgmgmm.esls.receiver.ZKCScanCodeBroadcastReceiver
+import dev.zgmgmm.esls.showInfoTipDialog
 import dev.zgmgmm.esls.widget.RecyclerView.OnItemClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -52,7 +52,7 @@ class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener 
         search.isSubmitButtonEnabled = true
         search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(q: String): Boolean {
-                newQuery(q,true)
+                newQuery(q, true)
                 return false
             }
 
@@ -73,14 +73,23 @@ class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener 
         refreshLayout.setOnRefreshListener(this)
         refreshLayout.finishLoadMoreWithNoMoreData()
         // register zkc scan code broadcastReceiver
+
+    }
+
+    override fun onStart() {
+        super.onStart()
         zkcScanCodeBroadcastReceiver = ZKCScanCodeBroadcastReceiver.register(this) {
             search.setText(it)
-            newQuery(it,true)
+            newQuery(it, true)
         }
     }
 
-    override fun onDestroy() {
+    override fun onStop() {
         unregisterReceiver(zkcScanCodeBroadcastReceiver)
+        super.onStop()
+    }
+
+    override fun onDestroy() {
         loadingTipDialog.dismiss()
         super.onDestroy()
     }
@@ -89,27 +98,15 @@ class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener 
     @SuppressLint("CheckResult")
     override fun onLoadMore(refreshLayout: RefreshLayout) {
         query(false)
-//        val delay = RandomUtils.nextLong(500, 1500)
-//        recyclerView.postDelayed({
-//            val positionStart = labels.size
-//            var count = pageSize
-//            var success = true
-//            var noMore = false
-//            if (delay > 1000) {
-//                count = 0
-//                success = false
-//            }
-//            labels.addAll(Mock.getGoods(pageSize))
-//            adapter.notifyItemRangeInserted(positionStart, count)
-//            refreshLayout.finishLoadMore(500, success, noMore)
-//        }, delay)
     }
 
     override fun onRefresh(refreshLayout: RefreshLayout) {
-        newQuery(currentQuery,false)
+        search.setQuery(currentQuery,false)
+        newQuery(currentQuery, false)
     }
 
-    private fun newQuery(q: String,showLoadingTipDialog: Boolean = true) {
+    // 刷新/新输入查询
+    private fun newQuery(q: String, showLoadingTipDialog: Boolean = true) {
         currentQuery = q
         data.clear()
         adapter.notifyDataSetChanged()
@@ -133,6 +130,7 @@ class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener 
                 loadingTipDialog.show()
             }
             .doFinally {
+                refreshLayout.finishRefresh()
                 loadingTipDialog.hide()
             }
             .subscribe({
@@ -141,19 +139,21 @@ class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener 
                 val count = goods.size
                 val noMore = count < pageSize
                 if (count == 0) {
+                    if(page==0){
+                        showInfoTipDialog("找不到任何商品")
+                    }else{
+                        showInfoTipDialog("没有更多了")
+                    }
                     refreshLayout.finishLoadMoreWithNoMoreData()
-                    TipDialogUtil.showInfoTipDialog(this, "没有更多了")
                     return@subscribe
                 }
                 data.addAll(goods)
                 adapter.notifyItemRangeInserted(positionStart, count)
                 refreshLayout.finishLoadMore(500, true, noMore)
-                refreshLayout.finishRefresh()
-//                TipDialogUtil.showTipDialog(this, "查询成功", QMUITipDialog.Builder.ICON_TYPE_SUCCESS)
             }, {
                 refreshLayout.finishLoadMore(false)
                 refreshLayout.finishRefresh(false)
-                TipDialogUtil.showFailTipDialog(this, "查询失败")
+                RequestExceptionHandler.handle(this, it)
             })
     }
 }

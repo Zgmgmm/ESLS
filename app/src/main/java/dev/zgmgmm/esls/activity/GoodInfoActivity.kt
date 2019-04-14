@@ -1,5 +1,6 @@
 package dev.zgmgmm.esls.activity
 
+import RequestExceptionHandler
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -8,14 +9,15 @@ import android.text.InputType
 import android.text.method.DigitsKeyListener
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog
-import dev.zgmgmm.esls.ESLS
-import dev.zgmgmm.esls.R
-import dev.zgmgmm.esls.TipDialogUtil
+import dev.zgmgmm.esls.*
 import dev.zgmgmm.esls.base.BaseActivity
 import dev.zgmgmm.esls.bean.Good
+import dev.zgmgmm.esls.bean.RequestBean
+import dev.zgmgmm.esls.exception.RequestException
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_good_info.*
+import org.jetbrains.anko.info
 import java.util.concurrent.TimeUnit
 
 
@@ -27,6 +29,7 @@ class GoodInfoActivity : BaseActivity() {
             val intent = Intent(context, GoodInfoActivity::class.java)
             intent.putExtra("good", good)
             context.startActivity(intent)
+
         }
     }
 
@@ -56,7 +59,7 @@ class GoodInfoActivity : BaseActivity() {
         // 寻找
         find.setOnClickListener {
             if (good.tagIdList.isEmpty()) {
-                TipDialogUtil.showTipDialog(this, "该商品未绑定任何标签", QMUITipDialog.Builder.ICON_TYPE_FAIL)
+                showTipDialog("该商品未绑定任何标签", QMUITipDialog.Builder.ICON_TYPE_FAIL)
             } else {
                 LabelListActivity.start(this, good.id)
             }
@@ -80,36 +83,47 @@ class GoodInfoActivity : BaseActivity() {
     }
 
     @SuppressLint("CheckResult")
-    private fun save(newPrice: Double) {
+    fun save(newPrice: Double) {
         val modified = good.copy(price = newPrice)
-        val tipDialog = QMUITipDialog.Builder(this)
-            .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-            .setTipWord("正在改价")
-            .create()
+        val tipDialog = createLoadingTipDialog("正在改价")
+        val loadingTipDialog = createLoadingTipDialog("改价成功，正在刷新标签")
 
         ESLS.instance.service.good(modified)
-            .timeout(5000, TimeUnit.MILLISECONDS)
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.from(mainLooper))
-            .doOnSubscribe { disposable ->
-                tipDialog.setOnCancelListener { disposable.dispose() }
+            .doOnNext {
+                if (!it.isSuccess())
+                    throw RequestException("改价失败 ${it.msg}")
+                info("改价成功 $it.data")
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                render(it.data)
+                tipDialog.dismiss()
+                loadingTipDialog.show()
+            }
+            .observeOn(Schedulers.io())
+            .flatMap { return@flatMap ESLS.instance.service.goodUpdate(RequestBean("id", good.id)) }
+            .doOnSubscribe {
                 tipDialog.show()
             }
+            .delay(1, TimeUnit.SECONDS)
+            .subscribeOn(AndroidSchedulers.mainThread())
             .doFinally {
                 tipDialog.dismiss()
+                loadingTipDialog.dismiss()
             }
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                if (it.code == 1) {
-                    good = modified
-                    render(good)
-                    TipDialogUtil.showSuccessTipDialog(this, "操作成功")
-                } else {
-                    TipDialogUtil.showFailTipDialog(this, "操作失败: ${it.msg}")
-                }
+                val stat = it.data
+                showSuccessTipDialog(
+                    "改价成功，刷新标签成功${stat.successNumber}个，失败${stat.sum - stat.successNumber}个",
+                    duration = 30 * 1000
+                )
             }, {
-                TipDialogUtil.showFailTipDialog(this, "操作失败: $it")
+                RequestExceptionHandler.handle(this, it)
             })
     }
+
 
     private fun showInputDialog() {
         val builder = QMUIDialog.EditTextDialogBuilder(this)
@@ -124,7 +138,7 @@ class GoodInfoActivity : BaseActivity() {
                 dialog.cancel()
             }
             .create()
-        builder.editText.keyListener = DigitsKeyListener.getInstance("123456789.");
+        builder.editText.keyListener = DigitsKeyListener.getInstance("123456789.")
         dialog.show()
     }
 }

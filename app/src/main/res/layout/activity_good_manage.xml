@@ -22,6 +22,7 @@
             android:background="@color/qmui_config_color_white"
             app:iconifiedByDefault="false"
             app:queryHint="商品条码/名字/供应商"
+            android:nextFocusForward="@id/refreshLayout"
     />
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
             android:id="@+id/refreshLayout"

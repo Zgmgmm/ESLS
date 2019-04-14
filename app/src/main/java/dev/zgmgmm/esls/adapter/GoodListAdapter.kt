@@ -8,7 +8,7 @@ import android.widget.TextView
 import dev.zgmgmm.esls.R
 import dev.zgmgmm.esls.bean.Good
 
-class GoodListAdapter(private var data: List<Good>) : RecyclerView.Adapter<GoodListAdapter.ViewHolder>(){
+class GoodListAdapter(private var data: List<Good>) : RecyclerView.Adapter<GoodListAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.list_item_good, parent, false)
         return ViewHolder(v)
@@ -17,16 +17,17 @@ class GoodListAdapter(private var data: List<Good>) : RecyclerView.Adapter<GoodL
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // 绑定数据
         with(data[position]) {
-            holder.name.text = name
-            holder.provider.text = provider
+            holder.name.text = "名称: $name"
+            holder.provider.text = "供应商: $provider"
             holder.unit.text = "单位: $unit"
-            holder.price.text = "单价: ${price.toString()}"
+            holder.price.text = "原价: ${price.toString()}"
         }
     }
 
     override fun getItemId(position: Int): Long {
         return data[position].id.toLong()
     }
+
     override fun getItemCount(): Int {
         return data.size
     }

@@ -3,6 +3,7 @@
           package="dev.zgmgmm.esls">
     <uses-permission android:name="android.permission.INTERNET" />
 
+
     <application
             android:name=".ESLS"
             android:allowBackup="true"

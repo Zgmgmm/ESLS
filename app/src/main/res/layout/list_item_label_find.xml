@@ -13,21 +13,29 @@
             android:padding="8dp"
             android:orientation="vertical">
         <TextView
-                android:id="@+id/type"
-                android:text="屏类型"
+                android:id="@+id/barcode"
+                android:text="条码"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
         />
         <TextView
+                android:id="@+id/type"
+                android:text="屏类型"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="@id/barcode"
+                app:layout_constraintTop_toBottomOf="@id/barcode"
+        />
+        <TextView
                 android:id="@+id/size"
                 android:text="宽X高"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="48sp"
+                android:layout_marginStart="32sp"
                 app:layout_constraintLeft_toRightOf="@id/type"
-                app:layout_constraintTop_toTopOf="@id/type"
+                app:layout_constraintTop_toBottomOf="@id/barcode"
         />
         <TextView
                 android:id="@+id/power"
@@ -42,8 +50,7 @@
                 android:text="状态（是否绑定）"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="48sp"
-                app:layout_constraintLeft_toRightOf="@id/power"
+                app:layout_constraintLeft_toLeftOf="@id/size"
                 app:layout_constraintTop_toTopOf="@id/power"
         />
         <CheckBox

@@ -43,7 +43,8 @@
                     android:id="@+id/user_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
+                    android:inputType="text"
+                    android:nextFocusForward="@id/password_input"
                     android:lines="1"
                     android:hint="账户"/>
             <android.support.design.widget.TextInputEditText
@@ -51,8 +52,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
-                    android:maxLines="1"
                     android:lines="1"
+                    android:nextFocusForward="@id/login"
                     android:hint="密码"/>
             <LinearLayout
                     android:orientation="horizontal"
@@ -63,14 +64,16 @@
                         android:text="记住密码"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/checkBox5"
+                        android:id="@+id/remember_me"
                         android:layout_weight="1"
 
                 />
                 <CheckBox
                         android:text="自动登录"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/checkBox6" android:layout_weight="1"/>
+                        android:layout_height="wrap_content"
+                        android:id="@+id/auto_login"
+                        android:layout_weight="1"/>
             </LinearLayout>
             <LinearLayout
                     android:orientation="horizontal"

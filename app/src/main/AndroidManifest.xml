@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="dev.zgmgmm.esls">
+    package="dev.zgmgmm.esls">
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 
     <application
-            android:name=".ESLS"
-            android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
-            android:supportsRtl="true"
-            android:theme="@style/AppTheme"
-    >
+        android:name="ESLS"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
 
         <activity android:name="dev.zgmgmm.esls.activity.LoginActivity">
             <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER"/>
-                <action android:name="android.intent.action.VIEW"/>
-                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name="dev.zgmgmm.esls.activity.HomeActivity"/>
-        <activity android:name="dev.zgmgmm.esls.activity.GoodQueryActivity"/>
-        <activity android:name="dev.zgmgmm.esls.activity.GoodInfoActivity"/>
-        <activity android:name="dev.zgmgmm.esls.activity.LabelQueryActivity"/>
-        <activity android:name="dev.zgmgmm.esls.activity.LabelInfoActivity"/>
-        <activity android:name="dev.zgmgmm.esls.activity.BindActivity"/>
-        <activity android:name="dev.zgmgmm.esls.activity.ServerConfigActivity"/>
-        <activity android:name="dev.zgmgmm.esls.activity.LabelListActivity"/>
-        <!--<activity android:name="dev.zgmgmm.esls.TestActivity"/>-->
+        <activity android:name="dev.zgmgmm.esls.activity.HomeActivity" />
+        <activity android:name="dev.zgmgmm.esls.activity.GoodQueryActivity" />
+        <activity android:name="dev.zgmgmm.esls.activity.GoodInfoActivity" />
+        <activity android:name="dev.zgmgmm.esls.activity.LabelQueryActivity" />
+        <activity android:name="dev.zgmgmm.esls.activity.LabelInfoActivity" />
+        <activity android:name="dev.zgmgmm.esls.activity.BindActivity" />
+        <activity android:name="dev.zgmgmm.esls.activity.ServerConfigActivity" />
+        <activity android:name="dev.zgmgmm.esls.activity.LabelListActivity" />
+        <activity android:name="dev.zgmgmm.esls.activity.CameraScanAcvitity"/>
     </application>
 
 </manifest>

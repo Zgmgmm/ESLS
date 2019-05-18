@@ -27,7 +27,8 @@ class LoginActivity : BaseActivity() {
          * 需要进行检测的权限数组
          */
         val PERMISSIONS = arrayOf(
-            Manifest.permission.INTERNET
+            Manifest.permission.INTERNET,
+            Manifest.permission.CAMERA
         )
 
         fun start(context: Context) {
@@ -55,7 +56,6 @@ class LoginActivity : BaseActivity() {
             if (this != null) password_input.setText(this)
         }
         login.setOnClickListener {
-            checkPermissions(PERMISSIONS)
             login()
         }
         exit.setOnClickListener {
@@ -75,6 +75,8 @@ class LoginActivity : BaseActivity() {
                 login()
             }
         }
+        checkPermissions(PERMISSIONS)
+
     }
 
 

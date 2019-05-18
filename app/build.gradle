@@ -25,6 +25,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildToolsVersion = '28.0.3'
 }
 
 
@@ -61,8 +62,7 @@ dependencies {
     // https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxandroid
     implementation group: 'io.reactivex.rxjava2', name: 'rxandroid', version: '2.1.0'
 
-    // https://mvnrepository.com/artifact/com.jakewharton.rxbinding/rxbinding
-// https://mvnrepository.com/artifact/com.jakewharton.rxbinding2/rxbinding
+    // https://mvnrepository.com/artifact/com.jakewharton.rxbinding2/rxbinding
     implementation group: 'com.jakewharton.rxbinding2', name: 'rxbinding', version: '2.2.0'
 
     // Gson
@@ -78,5 +78,10 @@ dependencies {
 
     // load more
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-20'
+
+    implementation 'com.king.zxing:zxing-lite:1.1.0'
+
+    api 'com.google.zxing:core:3.3.3'
+
 
 }

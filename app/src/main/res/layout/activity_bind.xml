@@ -10,6 +10,7 @@
             android:background="@color/colorPrimary"
             app:navigationIcon="@drawable/qmui_icon_topbar_back"
             app:titleTextColor="#fff"
+            app:layout_constraintTop_toTopOf="parent"
             app:title="绑定">
     </android.support.v7.widget.Toolbar>
     <android.support.design.widget.TextInputLayout
@@ -21,13 +22,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/good_code_layout"
+            android:orientation="horizontal"
     >
         <android.support.design.widget.TextInputEditText
                 android:id="@+id/good_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:hint="商品条码"/>
+                android:drawableEnd="@android:drawable/ic_menu_camera"
+                android:hint="商品条码">
+        </android.support.design.widget.TextInputEditText>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
             android:id="@+id/label_code_layout"
@@ -43,6 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
+                android:drawableEnd="@android:drawable/ic_menu_camera"
                 android:hint="标签条码"/>
     </android.support.design.widget.TextInputLayout>
     <FrameLayout android:layout_width="match_parent"

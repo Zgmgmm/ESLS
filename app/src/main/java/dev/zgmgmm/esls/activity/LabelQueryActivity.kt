@@ -2,6 +2,7 @@ package dev.zgmgmm.esls.activity
 
 import RequestExceptionHandler
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.widget.SearchView
 import dev.zgmgmm.esls.ESLS
@@ -14,10 +15,16 @@ import dev.zgmgmm.esls.exception.RequestException
 import dev.zgmgmm.esls.receiver.ZKCScanCodeBroadcastReceiver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_good_manage.*
 import kotlinx.android.synthetic.main.activity_label_manage.*
+import kotlinx.android.synthetic.main.activity_label_manage.camera
+import kotlinx.android.synthetic.main.activity_label_manage.search
+import kotlinx.android.synthetic.main.activity_label_manage.toolbar
+import org.jetbrains.anko.info
 
 class LabelQueryActivity : BaseActivity() {
     private lateinit var zkcScanCodeBroadcastReceiver: ZKCScanCodeBroadcastReceiver
+    private val SCAN_WITH_CAMERA: Int =1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +43,9 @@ class LabelQueryActivity : BaseActivity() {
 
             override fun onQueryTextChange(newText: String) = false
         })
-
+        camera.setOnClickListener{
+            startActivityForResult(Intent(this, CameraScanAcvitity::class.java), SCAN_WITH_CAMERA)
+        }
     }
 
     override fun onStart() {
@@ -75,6 +84,15 @@ class LabelQueryActivity : BaseActivity() {
             }, {
                 RequestExceptionHandler.handle(this, it)
             })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val result = data?.extras?.getString("result")
+        info("scan with camera: $result")
+        if (result==null)
+            return
+        search.setQuery(result,true)
     }
 }
 

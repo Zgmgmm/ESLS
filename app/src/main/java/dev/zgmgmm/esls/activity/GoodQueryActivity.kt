@@ -1,6 +1,7 @@
 package dev.zgmgmm.esls.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
@@ -21,12 +22,16 @@ import dev.zgmgmm.esls.showInfoTipDialog
 import dev.zgmgmm.esls.widget.RecyclerView.OnItemClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_bind.*
 import kotlinx.android.synthetic.main.activity_good_manage.*
+import kotlinx.android.synthetic.main.activity_good_manage.toolbar
+import org.jetbrains.anko.info
 import java.util.concurrent.TimeUnit
 
 class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener {
 
 
+    private val SCAN_WITH_CAMERA: Int =1
     private val data = ArrayList<Good>()
     private lateinit var adapter: GoodListAdapter
     private lateinit var zkcScanCodeBroadcastReceiver: ZKCScanCodeBroadcastReceiver
@@ -74,6 +79,9 @@ class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener 
         refreshLayout.finishLoadMoreWithNoMoreData()
         // register zkc scan code broadcastReceiver
 
+        camera.setOnClickListener{
+            startActivityForResult(Intent(this, CameraScanAcvitity::class.java), SCAN_WITH_CAMERA)
+        }
     }
 
     override fun onStart() {
@@ -156,5 +164,18 @@ class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener 
                 RequestExceptionHandler.handle(this, it)
             })
     }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val result = data?.extras?.getString("result")
+        info("scan with camera: $result")
+        if (result==null)
+            return
+        search.setText(result)
+        newQuery(result, true)
+    }
+
+
 }
 

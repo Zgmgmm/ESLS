@@ -2,7 +2,10 @@ package dev.zgmgmm.esls.activity
 
 import RequestExceptionHandler
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.graphics.Camera
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import com.jakewharton.rxbinding2.widget.RxTextView
@@ -22,9 +25,12 @@ import kotlinx.android.synthetic.main.activity_bind.*
 import org.jetbrains.anko.find
 import org.jetbrains.anko.info
 import java.util.concurrent.TimeUnit
+import com.king.zxing.CaptureActivity
+import com.king.zxing.CaptureHelper
 
 
 class BindActivity : BaseActivity() {
+    private val SCAN_WITH_CAMERA: Int = 0x1
     private lateinit var zkcScanCodeBroadcastReceiver: ZKCScanCodeBroadcastReceiver
     private var autoQueryGood: Disposable? = null
     private var autoQueryLabel: Disposable? = null
@@ -57,11 +63,28 @@ class BindActivity : BaseActivity() {
                 .show()
         }
 
+        val listener = View.OnTouchListener { v, e ->
+            v as TextView
+            if (e.action == MotionEvent.ACTION_UP
+                && e.rawX >= (v.right - v.compoundDrawables[2].bounds.width())
+            ) {
+                scanWithCamera(
+                    when (v) {
+                        good_code -> SCAN_GOOD_CODE
+                        label_code -> SCAN_LABEL_CODE
+                        else -> -1
+                    }
+                )
+            }
+            return@OnTouchListener false;
+        }
+        good_code.setOnTouchListener(listener)
+        label_code.setOnTouchListener(listener)
+
 
         autoQueryLabel()
         autoQueryGood()
     }
-
 
 
     override fun onStart() {
@@ -119,10 +142,10 @@ class BindActivity : BaseActivity() {
                 )
             }
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe{
-                if(autoQueryGood!=null)
+            .doOnSubscribe {
+                if (autoQueryGood != null)
                     compositeDisposable.remove(autoQueryGood!!)
-                autoQueryGood=it
+                autoQueryGood = it
                 compositeDisposable.add(it)
             }
             .subscribe({
@@ -162,10 +185,10 @@ class BindActivity : BaseActivity() {
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe{
-                if(autoQueryLabel!=null)
+            .doOnSubscribe {
+                if (autoQueryLabel != null)
                     compositeDisposable.remove(autoQueryLabel!!)
-                autoQueryLabel=it
+                autoQueryLabel = it
                 compositeDisposable.add(it)
             }
             .subscribe({
@@ -211,7 +234,6 @@ class BindActivity : BaseActivity() {
         labelInfo.visibility = View.VISIBLE
 
     }
-
 
 
     @SuppressLint("CheckResult")
@@ -304,7 +326,7 @@ class BindActivity : BaseActivity() {
         labelInfo.run {
             find<TextView>(R.id.type).text = "屏幕类型: ${label.screenType}"
             find<TextView>(R.id.size).text = "宽x高: ${label.resolutionWidth} X ${label.resolutionHeight}"
-            find<TextView>(R.id.state).text ="状态: ${label.state}"
+            find<TextView>(R.id.state).text = "状态: ${label.state}"
             find<TextView>(R.id.power).text = "电量: ${label.power}"
             visibility = View.VISIBLE
         }
@@ -319,5 +341,26 @@ class BindActivity : BaseActivity() {
             visibility = View.VISIBLE
         }
     }
+
+
+    val SCAN_GOOD_CODE = 0
+    val SCAN_LABEL_CODE = 1
+    var scanWhich = 1
+    private fun scanWithCamera(which: Int) {
+        scanWhich = which
+        startActivityForResult(Intent(this, CameraScanAcvitity::class.java), SCAN_WITH_CAMERA)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val result = data?.extras?.getString("result")
+        info("scan with camera: $result")
+        when (scanWhich) {
+            SCAN_GOOD_CODE -> good_code
+            SCAN_LABEL_CODE -> label_code
+            else -> null
+        }?.setText(result)
+    }
+
 
 }

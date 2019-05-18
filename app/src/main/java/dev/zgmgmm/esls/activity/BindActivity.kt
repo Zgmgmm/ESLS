@@ -3,7 +3,6 @@ package dev.zgmgmm.esls.activity
 import RequestExceptionHandler
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Camera
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -25,8 +24,6 @@ import kotlinx.android.synthetic.main.activity_bind.*
 import org.jetbrains.anko.find
 import org.jetbrains.anko.info
 import java.util.concurrent.TimeUnit
-import com.king.zxing.CaptureActivity
-import com.king.zxing.CaptureHelper
 
 
 class BindActivity : BaseActivity() {
@@ -348,7 +345,7 @@ class BindActivity : BaseActivity() {
     var scanWhich = 1
     private fun scanWithCamera(which: Int) {
         scanWhich = which
-        startActivityForResult(Intent(this, CameraScanAcvitity::class.java), SCAN_WITH_CAMERA)
+        startActivityForResult(Intent(this, CameraScanActivity::class.java), SCAN_WITH_CAMERA)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

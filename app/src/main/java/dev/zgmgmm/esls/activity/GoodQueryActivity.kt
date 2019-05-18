@@ -4,10 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.ListView
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener
@@ -22,28 +21,26 @@ import dev.zgmgmm.esls.showInfoTipDialog
 import dev.zgmgmm.esls.widget.RecyclerView.OnItemClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_bind.*
-import kotlinx.android.synthetic.main.activity_good_manage.*
-import kotlinx.android.synthetic.main.activity_good_manage.toolbar
+import kotlinx.android.synthetic.main.activity_good_query.*
+import kotlinx.android.synthetic.main.activity_good_query.toolbar
 import org.jetbrains.anko.info
-import retrofit2.HttpException
 import java.util.concurrent.TimeUnit
 
 class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener {
 
 
-    private val SCAN_WITH_CAMERA: Int =1
+    private val SCAN_WITH_CAMERA: Int = 1
     private val data = ArrayList<Good>()
     private lateinit var adapter: GoodListAdapter
     private lateinit var zkcScanCodeBroadcastReceiver: ZKCScanCodeBroadcastReceiver
     private lateinit var loadingTipDialog: QMUITipDialog
 
     private var currentQuery = ""
-    private var pageSize = 10
+    private var pageSize = 8
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_good_manage)
+        setContentView(R.layout.activity_good_query)
         // set action bar
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { finish() }
@@ -68,20 +65,14 @@ class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener 
         adapter = GoodListAdapter(data)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
-        recyclerView.setOnItemClickListener(object : OnItemClickListener {
-            override fun onItemClick(view: View, position: Int, id: Long) {
-                GoodInfoActivity.start(this@GoodQueryActivity, data[position])
-            }
-        })
-
         // init refresh layout
         refreshLayout.setOnLoadMoreListener(this)
         refreshLayout.setOnRefreshListener(this)
         refreshLayout.finishLoadMoreWithNoMoreData()
         // register zkc scan code broadcastReceiver
 
-        camera.setOnClickListener{
-            startActivityForResult(Intent(this, CameraScanAcvitity::class.java), SCAN_WITH_CAMERA)
+        camera.setOnClickListener {
+            startActivityForResult(Intent(this, CameraScanActivity::class.java), SCAN_WITH_CAMERA)
         }
     }
 
@@ -104,17 +95,16 @@ class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener 
     }
 
 
-    @SuppressLint("CheckResult")
     override fun onLoadMore(refreshLayout: RefreshLayout) {
         query(false)
     }
 
     override fun onRefresh(refreshLayout: RefreshLayout) {
-        search.setQuery(currentQuery,false)
+        search.setQuery(currentQuery, false)
         newQuery(currentQuery, false)
     }
 
-    // 刷新/新输入查询
+    // 刷新/新查询
     private fun newQuery(q: String, showLoadingTipDialog: Boolean = true) {
         currentQuery = q
         data.clear()
@@ -147,8 +137,8 @@ class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener 
                 val positionStart = data.size
                 val count = goods.size
                 val noMore = count < pageSize
-                if(page==0){
                 if (count == 0) {
+                    if(page==0){
                         showInfoTipDialog("找不到任何商品")
                     }else{
                         showInfoTipDialog("没有更多了")
@@ -159,6 +149,7 @@ class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener 
                 data.addAll(goods)
                 adapter.notifyItemRangeInserted(positionStart, count)
                 refreshLayout.finishLoadMore(500, true, noMore)
+                refreshLayout.finishRefresh()
             }, {
                 refreshLayout.finishLoadMore(false)
                 refreshLayout.finishRefresh(false)
@@ -171,9 +162,9 @@ class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener 
         super.onActivityResult(requestCode, resultCode, data)
         val result = data?.extras?.getString("result")
         info("scan with camera: $result")
-        if (result==null)
+        if (result == null)
             return
-        search.setText(result)
+        search.setQuery(result, false)
         newQuery(result, true)
     }
 

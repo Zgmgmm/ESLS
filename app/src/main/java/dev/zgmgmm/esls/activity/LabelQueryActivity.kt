@@ -15,8 +15,6 @@ import dev.zgmgmm.esls.exception.RequestException
 import dev.zgmgmm.esls.receiver.ZKCScanCodeBroadcastReceiver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_good_manage.*
-import kotlinx.android.synthetic.main.activity_label_manage.*
 import kotlinx.android.synthetic.main.activity_label_manage.camera
 import kotlinx.android.synthetic.main.activity_label_manage.search
 import kotlinx.android.synthetic.main.activity_label_manage.toolbar
@@ -44,7 +42,7 @@ class LabelQueryActivity : BaseActivity() {
             override fun onQueryTextChange(newText: String) = false
         })
         camera.setOnClickListener{
-            startActivityForResult(Intent(this, CameraScanAcvitity::class.java), SCAN_WITH_CAMERA)
+            startActivityForResult(Intent(this, CameraScanActivity::class.java), SCAN_WITH_CAMERA)
         }
     }
 

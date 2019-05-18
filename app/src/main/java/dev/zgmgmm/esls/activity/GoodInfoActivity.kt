@@ -92,13 +92,14 @@ class GoodInfoActivity : BaseActivity() {
             .subscribeOn(Schedulers.io())
             .doOnNext {
                 if (!it.isSuccess())
-                    throw RequestException("改价失败 ${it.msg}")
-                info("改价成功 $it.data")
+                    throw RequestException("改价失败 ${it.data}")
             }
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
                 render(it.data)
                 tipDialog.dismiss()
+                showSuccessTipDialog("改价成功")
+
 //                loadingTipDialog.show()
             }
             .observeOn(Schedulers.io())
@@ -120,7 +121,7 @@ class GoodInfoActivity : BaseActivity() {
 //                    duration = 30 * 1000
 //                )
             }, {
-//                RequestExceptionHandler.handle(this, it)
+                RequestExceptionHandler.handle(this, it)
             })
     }
 

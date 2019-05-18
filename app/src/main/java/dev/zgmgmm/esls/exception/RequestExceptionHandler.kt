@@ -55,7 +55,7 @@ class RequestExceptionHandler {
             val json=exception.response().errorBody()?.string()
             try {
                 val response = Gson().fromJson(json, Response::class.java)
-                var msg=response.msg
+                var msg=response.data.toString()
                 if(msg.isEmpty())
                     msg="请求错误"
                 context.showFailTipDialog(msg)

@@ -86,7 +86,7 @@ class GoodInfoActivity : BaseActivity() {
     fun save(newPrice: Double) {
         val modified = good.copy(price = newPrice)
         val tipDialog = createLoadingTipDialog("正在改价")
-        val loadingTipDialog = createLoadingTipDialog("改价成功，正在刷新标签")
+//        val loadingTipDialog = createLoadingTipDialog("改价成功，正在刷新标签")
 
         ESLS.instance.service.good(modified)
             .subscribeOn(Schedulers.io())
@@ -99,7 +99,7 @@ class GoodInfoActivity : BaseActivity() {
             .doOnNext {
                 render(it.data)
                 tipDialog.dismiss()
-                loadingTipDialog.show()
+//                loadingTipDialog.show()
             }
             .observeOn(Schedulers.io())
             .flatMap { return@flatMap ESLS.instance.service.goodUpdate(RequestBean("id", good.id)) }
@@ -110,17 +110,17 @@ class GoodInfoActivity : BaseActivity() {
             .subscribeOn(AndroidSchedulers.mainThread())
             .doFinally {
                 tipDialog.dismiss()
-                loadingTipDialog.dismiss()
+//                loadingTipDialog.dismiss()
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 val stat = it.data
-                showSuccessTipDialog(
-                    "改价成功，刷新标签成功${stat.successNumber}个，失败${stat.sum - stat.successNumber}个",
-                    duration = 30 * 1000
-                )
+//                showSuccessTipDialog(
+//                    "改价成功，刷新标签成功${stat.successNumber}个，失败${stat.sum - stat.successNumber}个",
+//                    duration = 30 * 1000
+//                )
             }, {
-                RequestExceptionHandler.handle(this, it)
+//                RequestExceptionHandler.handle(this, it)
             })
     }
 

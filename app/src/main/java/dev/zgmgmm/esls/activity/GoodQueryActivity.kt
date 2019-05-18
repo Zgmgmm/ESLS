@@ -26,6 +26,7 @@ import kotlinx.android.synthetic.main.activity_bind.*
 import kotlinx.android.synthetic.main.activity_good_manage.*
 import kotlinx.android.synthetic.main.activity_good_manage.toolbar
 import org.jetbrains.anko.info
+import retrofit2.HttpException
 import java.util.concurrent.TimeUnit
 
 class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener {
@@ -146,8 +147,8 @@ class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener 
                 val positionStart = data.size
                 val count = goods.size
                 val noMore = count < pageSize
+                if(page==0){
                 if (count == 0) {
-                    if(page==0){
                         showInfoTipDialog("找不到任何商品")
                     }else{
                         showInfoTipDialog("没有更多了")

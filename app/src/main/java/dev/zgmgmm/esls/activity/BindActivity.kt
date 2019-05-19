@@ -60,24 +60,13 @@ class BindActivity : BaseActivity() {
                 .show()
         }
 
-        val listener = View.OnTouchListener { v, e ->
-            v as TextView
-            if (e.action == MotionEvent.ACTION_UP
-                && e.rawX >= (v.right - v.compoundDrawables[2].bounds.width())
-            ) {
-                scanWithCamera(
-                    when (v) {
-                        good_code -> SCAN_GOOD_CODE
-                        label_code -> SCAN_LABEL_CODE
-                        else -> -1
-                    }
-                )
-            }
-            return@OnTouchListener false;
+        cameraForGood.setOnClickListener {
+            scanWithCamera(SCAN_GOOD_CODE)
         }
-        good_code.setOnTouchListener(listener)
-        label_code.setOnTouchListener(listener)
 
+        cameraForLabel.setOnClickListener {
+            scanWithCamera(SCAN_LABEL_CODE)
+        }
 
         autoQueryLabel()
         autoQueryGood()

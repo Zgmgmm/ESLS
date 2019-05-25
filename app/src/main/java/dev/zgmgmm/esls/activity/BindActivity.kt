@@ -244,6 +244,7 @@ class BindActivity : BaseActivity() {
             .subscribe({
                 if (it.isSuccess()) {
                     label_code.setText("")
+                    good_code.setText("")
                     showSuccessTipDialog("绑定成功")
                 } else {
                     throw RequestException("绑定失败 ${it.data}")

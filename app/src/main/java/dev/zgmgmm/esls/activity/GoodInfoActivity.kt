@@ -42,6 +42,7 @@ class GoodInfoActivity : BaseActivity() {
 
         val inputs = listOf(
             name,
+            stock,
             provider,
             price,
             unit,
@@ -73,6 +74,7 @@ class GoodInfoActivity : BaseActivity() {
 
     private fun render(good: Good) {
         name.setText(good.name)
+        stock.setText(good.stock)
         provider.setText(good.provider)
         price.setText(good.price.toString())
         unit.setText(good.unit)

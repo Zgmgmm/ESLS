@@ -8,17 +8,20 @@ import android.os.Bundle
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener
 import dev.zgmgmm.esls.*
 import dev.zgmgmm.esls.base.BaseActivity
+import dev.zgmgmm.esls.bean.Good
 import dev.zgmgmm.esls.bean.Label
 import dev.zgmgmm.esls.bean.RequestBean
 import dev.zgmgmm.esls.exception.RequestException
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_label_info.*
+import kotlinx.android.synthetic.main.list_item_good.*
 
 @SuppressLint("CheckResult")
 class LabelInfoActivity : BaseActivity(),OnRefreshListener {
@@ -51,7 +54,7 @@ class LabelInfoActivity : BaseActivity(),OnRefreshListener {
         toolbar.setNavigationOnClickListener { finish() }
 
         render(intent.getSerializableExtra("label") as Label)
-        listOf(barcode, power, rssi, state).forEach { it.inputType = InputType.TYPE_NULL }
+        listOf(barcode, power, rssi).forEach { it.inputType = InputType.TYPE_NULL }
 
         update.setOnClickListener { request(Action.UPDATE) }
         scan.setOnClickListener { request(Action.SCAN) }
@@ -97,7 +100,7 @@ class LabelInfoActivity : BaseActivity(),OnRefreshListener {
 
     private fun getGood() {
         if (!label.isBound()) {
-            good.visibility = GONE
+            good.visibility= View.GONE
             return
         }
         ESLS.instance.service.good(label.goodId!!)
@@ -109,10 +112,19 @@ class LabelInfoActivity : BaseActivity(),OnRefreshListener {
             .map { it.data.first() }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                good.setText(it.name)
+                renderGood(it)
             }, {
                 RequestExceptionHandler.handle(this, it)
             })
+    }
+
+
+    private fun renderGood(good: Good) {
+        name.text = "名称: ${good.name}"
+        stock.text = "库存: ${good.stock}"
+        provider.text = "供应商: ${good.provider}"
+        unit.text = "单位: ${good.unit}"
+        price.text = "原价: ${good.price}"
     }
 
     private fun render(label: Label) {
@@ -121,8 +133,6 @@ class LabelInfoActivity : BaseActivity(),OnRefreshListener {
         size.setText("${label.resolutionWidth} x ${label.resolutionHeight}")
         power.setText(label.power.toString())
         rssi.setText(label.tagRssi.toString())
-        val bound = label.state
-        state.setText(bound)
     }
     private fun unbind(){
         val tipDialog = createLoadingTipDialog("正在解除绑定")

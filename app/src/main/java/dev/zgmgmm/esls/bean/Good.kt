@@ -25,6 +25,7 @@ data class Good(
     var rfus01: String? = "",
     var rfus02: String? = "",
     var regionNames: String? = "",
+    var stock:String?="",
     var shelfNumber: String? = "",
     var tagIdList: List<Long> = listOf()
 ) : Serializable

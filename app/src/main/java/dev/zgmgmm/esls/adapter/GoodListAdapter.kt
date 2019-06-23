@@ -21,6 +21,7 @@ class GoodListAdapter(private var data: List<Good>) : RecyclerView.Adapter<GoodL
         // 绑定数据
         with(data[position]) {
             holder.name.text = "名称: $name"
+            holder.stock.text = "库存: $stock"
             holder.provider.text = "供应商: $provider"
             holder.unit.text = "单位: $unit"
             holder.price.text = "原价: ${price.toString()}"
@@ -47,6 +48,7 @@ class GoodListAdapter(private var data: List<Good>) : RecyclerView.Adapter<GoodL
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var view: View = itemView
         var name: TextView = itemView.findViewById(R.id.name)
+        var stock:TextView=itemView.findViewById(R.id.stock)
         var provider: TextView = itemView.findViewById(R.id.provider)
         var unit: TextView = itemView.findViewById(R.id.unit)
         var price: TextView = itemView.findViewById(R.id.price)

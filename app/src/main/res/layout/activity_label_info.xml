@@ -69,26 +69,7 @@
                         android:layout_height="wrap_content"
                         android:hint="RSSI"/>
             </android.support.design.widget.TextInputLayout>
-            <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:theme="@style/attr_text">
-                <android.support.design.widget.TextInputEditText
-                        android:id="@+id/state"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="绑定状态"/>
-            </android.support.design.widget.TextInputLayout>
-            <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:theme="@style/attr_text">
-                <android.support.design.widget.TextInputEditText
-                        android:id="@+id/good"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="绑定商品"/>
-            </android.support.design.widget.TextInputLayout>
+            <include android:id="@+id/good" layout="@layout/list_item_good"/>
         </LinearLayout>
     </ScrollView>
 

@@ -22,13 +22,22 @@
         </TextView>
 
         <TextView
-                android:id="@+id/provider"
-                android:text="供应商"
+                android:id="@+id/stock"
+                android:text="库存"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintLeft_toLeftOf="@id/name"
                 app:layout_constraintTop_toBottomOf="@id/name"/>
 
+
+        <TextView
+                android:id="@+id/provider"
+                android:text="供应商"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="64sp"
+                app:layout_constraintLeft_toRightOf="@id/stock"
+                app:layout_constraintTop_toTopOf="@id/stock"/>
 
         <TextView
                 android:id="@+id/unit"

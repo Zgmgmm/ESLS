@@ -8,25 +8,26 @@ import android.widget.SearchView
 import dev.zgmgmm.esls.ESLS
 import dev.zgmgmm.esls.R
 import dev.zgmgmm.esls.base.BaseActivity
-import dev.zgmgmm.esls.bean.QueryItem
-import dev.zgmgmm.esls.bean.RequestBean
 import dev.zgmgmm.esls.createLoadingTipDialog
 import dev.zgmgmm.esls.exception.RequestException
+import dev.zgmgmm.esls.model.QueryItem
+import dev.zgmgmm.esls.model.RequestBean
 import dev.zgmgmm.esls.receiver.ZKCScanCodeBroadcastReceiver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_label_manage.camera
-import kotlinx.android.synthetic.main.activity_label_manage.search
-import kotlinx.android.synthetic.main.activity_label_manage.toolbar
+import kotlinx.android.synthetic.main.activity_label_manage.*
 import org.jetbrains.anko.info
 
 class LabelQueryActivity : BaseActivity() {
     private lateinit var zkcScanCodeBroadcastReceiver: ZKCScanCodeBroadcastReceiver
-    private val SCAN_WITH_CAMERA: Int =1
-
+    private val SCAN_WITH_CAMERA: Int = 1
+    private var target = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_label_manage)
+
+        target = intent.extras?.getString("target", "") ?: ""
+
 
         // action bar
         setSupportActionBar(toolbar)
@@ -41,7 +42,7 @@ class LabelQueryActivity : BaseActivity() {
 
             override fun onQueryTextChange(newText: String) = false
         })
-        camera.setOnClickListener{
+        camera.setOnClickListener {
             startActivityForResult(Intent(this, CameraScanActivity::class.java), SCAN_WITH_CAMERA)
         }
     }
@@ -78,7 +79,11 @@ class LabelQueryActivity : BaseActivity() {
                 if (it.data.isEmpty()) {
                     throw RequestException("标签不存在")
                 }
-                LabelInfoActivity.start(this, it.data[0])
+                if (target == "scale") {
+                    LabelInfoActivity.start(this, it.data[0])
+                } else {
+                    LabelInfoActivity.start(this, it.data[0])
+                }
             }, {
                 RequestExceptionHandler.handle(this, it)
             })
@@ -88,9 +93,9 @@ class LabelQueryActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         val result = data?.extras?.getString("result")
         info("scan with camera: $result")
-        if (result==null)
+        if (result == null)
             return
-        search.setQuery(result,true)
+        search.setQuery(result, true)
     }
 }
 

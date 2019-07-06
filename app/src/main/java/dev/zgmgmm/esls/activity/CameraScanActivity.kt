@@ -5,7 +5,7 @@ import android.content.Intent
 import com.king.zxing.CaptureActivity
 
 
-class CameraScanActivity: CaptureActivity() {
+class CameraScanActivity : CaptureActivity() {
     override fun onResultCallback(result: String?): Boolean {
         val intent = Intent()
         intent.putExtra("result", result)

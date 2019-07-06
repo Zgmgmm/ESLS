@@ -11,7 +11,7 @@
             android:background="@color/colorPrimary"
             app:title="ESLS"
             app:titleTextColor="#fff"
-            />
+            app:layout_constraintTop_toTopOf="parent"/>
     <android.support.v7.widget.CardView
             android:id="@+id/good_manage"
             android:orientation="vertical"
@@ -127,6 +127,7 @@
 
         </LinearLayout>
     </android.support.v7.widget.CardView>
+
 
     <android.support.constraint.Guideline
             android:id="@+id/guideline"

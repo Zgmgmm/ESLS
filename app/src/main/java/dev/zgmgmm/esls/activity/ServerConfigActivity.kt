@@ -9,7 +9,6 @@ import dev.zgmgmm.esls.*
 import dev.zgmgmm.esls.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_server_config.*
 import org.jetbrains.anko.defaultSharedPreferences
-import org.jetbrains.anko.info
 
 class ServerConfigActivity : BaseActivity() {
     companion object {
@@ -52,7 +51,7 @@ class ServerConfigActivity : BaseActivity() {
                 newUrl = "$newUrl/"
             url.setText(newUrl)
             val success =
-                ESLS.instance.initService(newUrl,timeout)
+                ESLS.instance.initService(newUrl, timeout)
                         &&
                         defaultSharedPreferences.edit()
                             .putString(Constant.Pref.API_BASE_URL, newUrl)
@@ -65,7 +64,7 @@ class ServerConfigActivity : BaseActivity() {
             }
         }
 
-        cancel.setOnClickListener{
+        cancel.setOnClickListener {
             finish()
         }
         super.onCreate(savedInstanceState)

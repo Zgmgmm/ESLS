@@ -4,6 +4,7 @@ import RequestExceptionHandler
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
 import android.text.method.DigitsKeyListener
@@ -11,13 +12,12 @@ import com.qmuiteam.qmui.widget.dialog.QMUIDialog
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog
 import dev.zgmgmm.esls.*
 import dev.zgmgmm.esls.base.BaseActivity
-import dev.zgmgmm.esls.bean.Good
-import dev.zgmgmm.esls.bean.RequestBean
 import dev.zgmgmm.esls.exception.RequestException
+import dev.zgmgmm.esls.model.Good
+import dev.zgmgmm.esls.model.RequestBean
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_good_info.*
-import org.jetbrains.anko.info
 import java.util.concurrent.TimeUnit
 
 
@@ -39,17 +39,19 @@ class GoodInfoActivity : BaseActivity() {
         // action bar
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { finish() }
-
         val inputs = listOf(
             name,
-            stock,
             provider,
             price,
             unit,
             barcode,
             promotionReason,
             promotePrice,
-            labels
+            labels,
+            weightSpec,
+            isComputeOpen,
+            replenishNumber,
+            computeNumber
         )
         inputs.forEach {
             it.inputType = InputType.TYPE_NULL
@@ -62,6 +64,7 @@ class GoodInfoActivity : BaseActivity() {
             if (good.tagIdList.isEmpty()) {
                 showTipDialog("该商品未绑定任何标签", QMUITipDialog.Builder.ICON_TYPE_FAIL)
             } else {
+
                 LabelListActivity.start(this, good.id)
             }
         }
@@ -74,7 +77,6 @@ class GoodInfoActivity : BaseActivity() {
 
     private fun render(good: Good) {
         name.setText(good.name)
-        stock.setText(good.stock)
         provider.setText(good.provider)
         price.setText(good.price.toString())
         unit.setText(good.unit)
@@ -82,11 +84,19 @@ class GoodInfoActivity : BaseActivity() {
         promotionReason.setText(good.promotionReason)
         promotePrice.setText(good.promotePrice.toString())
         labels.setText(good.tagIdList.size.toString())
+        weightSpec.setText(good.weightSpec)
+        isComputeOpen.setText(good.isComputeOpen.toString())
+        replenishNumber.setText(good.replenishNumber)
+        computeNumber.setText(good.computeNumber)
+
+        if (good.needReplenish) {
+            computeNumber.setTextColor(Color.RED)
+        }
     }
 
     @SuppressLint("CheckResult")
     fun save(newPrice: Double) {
-        val modified = good.copy(price = newPrice)
+        val modified = good.copy(price = newPrice.toString())
         val tipDialog = createLoadingTipDialog("正在改价")
 //        val loadingTipDialog = createLoadingTipDialog("改价成功，正在刷新标签")
 
@@ -105,7 +115,7 @@ class GoodInfoActivity : BaseActivity() {
 //                loadingTipDialog.show()
             }
             .observeOn(Schedulers.io())
-            .flatMap { return@flatMap ESLS.instance.service.goodUpdate(RequestBean("id", good.id)) }
+            .flatMap { return@flatMap ESLS.instance.service.goodUpdate(RequestBean("id", good.id.toString())) }
             .doOnSubscribe {
                 tipDialog.show()
             }
@@ -117,7 +127,7 @@ class GoodInfoActivity : BaseActivity() {
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                val stat = it.data
+                //                val stat = it.data
 //                showSuccessTipDialog(
 //                    "改价成功，刷新标签成功${stat.successNumber}个，失败${stat.sum - stat.successNumber}个",
 //                    duration = 30 * 1000
@@ -134,14 +144,17 @@ class GoodInfoActivity : BaseActivity() {
             .setTitle("输入新的价格")
             .addAction("确定") { dialog, _ ->
                 dialog.dismiss()
-                val newPrice = builder.editText.text.toString().toDouble()
-                save(newPrice)
+                val newPrice = builder.editText.text.toString().toDoubleOrNull()
+                if (newPrice == null)
+                    showFailTipDialog("格式错误")
+                else
+                    save(newPrice)
             }
             .addAction("取消") { dialog, _ ->
                 dialog.cancel()
             }
             .create()
-        builder.editText.keyListener = DigitsKeyListener.getInstance("123456789.")
+        builder.editText.keyListener = DigitsKeyListener.getInstance("1234567890.")
         dialog.show()
     }
 }

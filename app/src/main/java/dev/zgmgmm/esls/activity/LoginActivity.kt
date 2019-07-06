@@ -10,9 +10,10 @@ import android.view.Menu
 import android.view.MenuItem
 import dev.zgmgmm.esls.*
 import dev.zgmgmm.esls.base.BaseActivity
-import dev.zgmgmm.esls.bean.User
-import dev.zgmgmm.esls.bean.UserInfo
 import dev.zgmgmm.esls.exception.RequestException
+import dev.zgmgmm.esls.interceptor.TokenInterceptor
+import dev.zgmgmm.esls.model.User
+import dev.zgmgmm.esls.model.UserInfo
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
@@ -21,8 +22,8 @@ import org.jetbrains.anko.info
 
 class LoginActivity : BaseActivity() {
     companion object {
-        const val STATE_USERNAME="STATE_USERNAME"
-        const val STATE_PASSWORD="STATE_PASSWORD"
+        const val STATE_USERNAME = "STATE_USERNAME"
+        const val STATE_PASSWORD = "STATE_PASSWORD"
         /**
          * 需要进行检测的权限数组
          */
@@ -34,6 +35,8 @@ class LoginActivity : BaseActivity() {
         fun start(context: Context) {
             val intent = Intent(context, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.putExtra("may auto login",false)
+
             context.startActivity(intent)
         }
     }
@@ -62,15 +65,17 @@ class LoginActivity : BaseActivity() {
             finish()
         }
 
-        remember_me.setOnClickListener{
-            if(!remember_me.isChecked)
-                auto_login.isChecked=false
+        remember_me.setOnClickListener {
+            if (!remember_me.isChecked)
+                auto_login.isChecked = false
         }
-        auto_login.setOnClickListener{
-            if(auto_login.isChecked)
-                remember_me.isChecked=true
+
+        val mayAutoLogin=intent.getBooleanExtra("may auto login",true)
+        auto_login.setOnClickListener {
+            if (auto_login.isChecked)
+                remember_me.isChecked = true
         }
-        if (auto_login.isChecked) {
+        if (mayAutoLogin&&auto_login.isChecked) {
             runOnUiThread {
                 login()
             }
@@ -121,6 +126,7 @@ class LoginActivity : BaseActivity() {
 
     @SuppressLint("CheckResult")
     private fun login() {
+        TokenInterceptor.token=""
         val user = user_input.text.toString()
         val password = password_input.text.toString()
         if (user.isBlank()) {

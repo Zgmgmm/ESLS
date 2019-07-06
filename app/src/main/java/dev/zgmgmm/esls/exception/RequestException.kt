@@ -1,7 +1,9 @@
 package dev.zgmgmm.esls.exception
 
-import java.lang.Exception
-
-class RequestException(msg:String, cause: Throwable? =null): Exception(msg,cause) {
-    override val message: String = msg
+class RequestException(any: Any?, cause: Throwable? = null) : Exception(any.toString(), cause) {
+    override val message: String = when( any){
+        null->"未知错误"
+        else->any.toString()
+    }
 }
+

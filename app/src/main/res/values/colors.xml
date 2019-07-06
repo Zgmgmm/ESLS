@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">@color/qmui_config_color_blue</color>
-    <color name="colorPrimaryDark">@color/qmui_config_color_gray_1</color>
+    <color name="colorPrimaryDark">@color/qmui_config_color_gray_5</color>
     <color name="colorAccent">@color/qmui_config_color_50_blue</color>
 
 </resources>

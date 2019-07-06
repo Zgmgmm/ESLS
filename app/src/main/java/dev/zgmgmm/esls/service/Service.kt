@@ -1,6 +1,6 @@
 package dev.zgmgmm.esls.service
 
-import dev.zgmgmm.esls.bean.*
+import dev.zgmgmm.esls.model.*
 import io.reactivex.Observable
 import retrofit2.http.*
 
@@ -13,7 +13,7 @@ interface Service {
 
     // 查询指定ID商品
     @GET("goods/{id}")
-    fun good(@Path("id") id: String): Observable<Response<List<Good>>>
+    fun good(@Path("id") id: Int): Observable<Response<List<Good>>>
 
 
     // 根据条件查询商品
@@ -26,19 +26,19 @@ interface Service {
 
     // 搜索商品
     @POST("goods/search")
-    fun searchGood(@Query("connection") connecion: String, @Query("page") page: Int, @Query("count") count: Int, @Body requestBean: RequestBean): Observable<Response<List<Good>>>
+    fun searchGood(@Query("connection") connection: String, @Query("page") page: Int, @Query("count") count: Int, @Body requestBean: RequestBean): Observable<Response<List<Good>>>
 
     @PUT("good/update")
-    fun goodUpdate(@Body requestBean: RequestBean ): Observable<Response<Stat>>
+    fun goodUpdate(@Body requestBean: RequestBean): Observable<Response<Stat>>
 
     @POST("good")
     fun good(@Body good: Good): Observable<Response<Good>>
 
     @GET("tags/{id}")
-    fun tag(@Path("id") id: String): Observable<Response<List<Label>>>
+    fun tag(@Path("id") id: Int): Observable<Response<List<Label>>>
 
     @POST("tags/search")
-    fun searchTag(@Query("connection") connecion: String, @Query("page") page: Int?, @Query("count") count: Int?, @Body requestBean: RequestBean): Observable<Response<List<Label>>>
+    fun searchTag(@Query("connection") connection: String, @Query("page") page: Int?, @Query("count") count: Int?, @Body requestBean: RequestBean): Observable<Response<List<Label>>>
 
     @PUT("tag/bind")
     fun bind(
@@ -72,5 +72,14 @@ interface Service {
     @PUT("tag/status")
     fun status(@Query("mode") mode: Int, @Body requestBean: RequestBean): Observable<Response<Stat>>
 
+    @POST("tag/compute")
+    fun manualCount(@Query("goodNumber") goodNumber: Int,  @Body requestBean: RequestBean): Observable<Response<String>>
+
+
+
+
+    // 电子秤
+    @POST("/api/balance")
+    fun weigher(@Query("mode") mode: Int, @Body requestBean: RequestBean, @Query("weight") weight: Int?=0): Observable<Response<String>>
 
 }

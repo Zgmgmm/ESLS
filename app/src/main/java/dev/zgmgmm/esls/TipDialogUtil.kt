@@ -7,7 +7,7 @@ import kotlin.concurrent.timerTask
 
 fun Context.createTipDialog(tipWord: String, iconType: Int): QMUITipDialog {
     val builder = QMUITipDialog.Builder(this)
-    val dialog=builder.setTipWord(tipWord)
+    val dialog = builder.setTipWord(tipWord)
         .setIconType(iconType)
         .create()
     dialog.setCanceledOnTouchOutside(true)
@@ -15,7 +15,7 @@ fun Context.createTipDialog(tipWord: String, iconType: Int): QMUITipDialog {
 }
 
 fun Context.createLoadingTipDialog(tipWord: String): QMUITipDialog {
-    val dialog=createTipDialog(tipWord, QMUITipDialog.Builder.ICON_TYPE_LOADING)
+    val dialog = createTipDialog(tipWord, QMUITipDialog.Builder.ICON_TYPE_LOADING)
     dialog.setCanceledOnTouchOutside(false)
     return dialog
 }

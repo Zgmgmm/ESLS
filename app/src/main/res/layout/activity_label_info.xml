@@ -13,8 +13,10 @@
             android:background="@color/colorPrimary"
             app:title="标签详情"
             app:titleTextColor="#fff"
-            app:navigationIcon="@drawable/qmui_icon_topbar_back"/>
-    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+            app:navigationIcon="@drawable/qmui_icon_topbar_back">
+    </android.support.v7.widget.Toolbar>
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+    android:layout_gravity="top">
         <LinearLayout
                 android:id="@+id/infoLayout"
                 android:layout_width="match_parent"
@@ -22,17 +24,66 @@
                 android:orientation="vertical"
                 android:padding="16dp"
         >
+
             <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:theme="@style/attr_text"
             >
                 <android.support.design.widget.TextInputEditText
-                        android:id="@+id/barcode"
+                        android:id="@+id/goodName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:tag="label_attr"
-                        android:hint="条码"/>
+                        android:hint="商品名称"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/attr_text"
+            >
+                <android.support.design.widget.TextInputEditText
+                        android:id="@+id/goodBarcode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:tag="label_attr"
+                        android:hint="商品条码"/>
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/attr_text"
+            >
+                <android.support.design.widget.TextInputEditText
+                        android:id="@+id/goodNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:tag="label_attr"
+                        android:hint="商品件数"/>
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/attr_text"
+            >
+                <android.support.design.widget.TextInputEditText
+                        android:id="@+id/totalWeight"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="总重量"/>
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/attr_text"
+            >
+                <android.support.design.widget.TextInputEditText
+                        android:id="@+id/labelBarcode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:tag="label_attr"
+                        android:hint="标签条码"/>
             </android.support.design.widget.TextInputLayout>
             <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -69,10 +120,21 @@
                         android:layout_height="wrap_content"
                         android:hint="RSSI"/>
             </android.support.design.widget.TextInputLayout>
-            <include android:id="@+id/good" layout="@layout/list_item_good"/>
+
+
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/attr_text"
+            >
+                <android.support.design.widget.TextInputEditText
+                        android:id="@+id/weigherPower"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="衡器电量"/>
+            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
     </ScrollView>
-
     <LinearLayout
             android:id="@+id/bottomLayout1"
             android:orientation="horizontal"
@@ -80,18 +142,36 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@+id/bottomLayout2">
         <Button
-                android:id="@+id/lightOn"
+                android:id="@+id/btn1"
                 android:text="开灯"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:layout_margin="2dp"
+                android:textColor="@color/qmui_config_color_white"/>
 
         <Button
-                android:id="@+id/lightOff"
+                android:id="@+id/btn2"
                 android:text="关灯"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:layout_margin="2dp"
+                android:textColor="@color/qmui_config_color_white"/>
+
+
+        <Button
+                android:id="@+id/btn3"
+                android:text="人工盘点"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:layout_margin="2dp"
+                android:textColor="@color/qmui_config_color_white"/>
+
     </LinearLayout>
 
     <LinearLayout
@@ -102,16 +182,32 @@
             app:layout_constraintBottom_toBottomOf="parent"
     >
         <Button
-                android:id="@+id/update"
+                android:id="@+id/btn4"
                 android:text="刷新"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:layout_margin="2dp"
+                android:textColor="@color/qmui_config_color_white"/>
         <Button
-                android:id="@+id/scan"
+                android:id="@+id/btn5"
                 android:text="巡检"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:layout_margin="2dp"
+                android:textColor="@color/qmui_config_color_white"/>
+        <Button
+                android:id="@+id/btn6"
+                android:text="显示衡器菜单"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/colorPrimaryDark"
+                android:layout_margin="2dp"
+                android:textColor="@color/qmui_config_color_white"/>
     </LinearLayout>
+
 </LinearLayout>

@@ -59,7 +59,7 @@ class ESLS : Application(), AnkoLogger {
         instance = this
     }
 
-    fun initService(baseUrl:String,requestTimeout:Long): Boolean {
+    fun initService(baseUrl: String, requestTimeout: Long): Boolean {
         info("init service: baseUrl=$baseUrl timeout=$requestTimeout s")
         try {
             val client = OkHttpClient.Builder()
@@ -85,8 +85,10 @@ class ESLS : Application(), AnkoLogger {
 
     override fun onCreate() {
         super.onCreate()
-        val baseUrl=defaultSharedPreferences.getString(Constant.Pref.API_BASE_URL, Constant.Net.DEFAULT_API_BASE_URL)!!
-        val requestTimeout=defaultSharedPreferences.getLong(Constant.Pref.REQUEST_TIMEOUT, Constant.Net.DEFAULT_REQUEST_TIMEOUT)
-        initService(baseUrl,requestTimeout)
+        val baseUrl =
+            defaultSharedPreferences.getString(Constant.Pref.API_BASE_URL, Constant.Net.DEFAULT_API_BASE_URL)!!
+        val requestTimeout =
+            defaultSharedPreferences.getLong(Constant.Pref.REQUEST_TIMEOUT, Constant.Net.DEFAULT_REQUEST_TIMEOUT)
+        initService(baseUrl, requestTimeout)
     }
 }

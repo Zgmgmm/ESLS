@@ -10,7 +10,7 @@ import org.jetbrains.anko.info
 /**
  * 监听zkc手持终端扫码广播
  */
-class ZKCScanCodeBroadcastReceiver(var onScanCode: (String) -> Unit) : BroadcastReceiver() ,AnkoLogger{
+class ZKCScanCodeBroadcastReceiver(var onScanCode: (String) -> Unit) : BroadcastReceiver(), AnkoLogger {
     companion object {
         fun register(context: Context, onScanCode: (String) -> Unit): ZKCScanCodeBroadcastReceiver {
             val scanBroadcastReceiver = ZKCScanCodeBroadcastReceiver(onScanCode)

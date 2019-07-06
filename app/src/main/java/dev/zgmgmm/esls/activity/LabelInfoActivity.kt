@@ -4,26 +4,31 @@ import RequestExceptionHandler
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
+import android.text.method.DigitsKeyListener
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.scwang.smartrefresh.layout.api.RefreshLayout
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener
+import android.widget.Button
+import android.widget.TextView
+import com.qmuiteam.qmui.widget.dialog.QMUIDialog
 import dev.zgmgmm.esls.*
 import dev.zgmgmm.esls.base.BaseActivity
-import dev.zgmgmm.esls.bean.Good
-import dev.zgmgmm.esls.bean.Label
-import dev.zgmgmm.esls.bean.RequestBean
 import dev.zgmgmm.esls.exception.RequestException
+import dev.zgmgmm.esls.model.*
+import dev.zgmgmm.esls.receiver.ZKCScanCodeBroadcastReceiver
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_label_info.*
-import kotlinx.android.synthetic.main.list_item_good.*
 
 @SuppressLint("CheckResult")
-class LabelInfoActivity : BaseActivity(),OnRefreshListener {
+class LabelInfoActivity : BaseActivity() {
+    private lateinit var zkcScanCodeBroadcastReceiver: ZKCScanCodeBroadcastReceiver
+    private lateinit var label: Label
+    private var boundGood: Good? = null
 
     companion object {
         fun start(context: Context, label: Label) {
@@ -33,17 +38,7 @@ class LabelInfoActivity : BaseActivity(),OnRefreshListener {
         }
     }
 
-    enum class Action(val desc: String) {
-        FLICK_ON("开启闪烁"),
-        FLICK_OFF("关闭闪烁"),
-        UPDATE("刷新"),
-        SCAN("巡检"),
-        REMOVE("移除"),
-        ENABLE("启用"),
-        DISABLE("禁用"),
-    }
 
-    private lateinit var label: Label
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_label_info)
@@ -52,14 +47,38 @@ class LabelInfoActivity : BaseActivity(),OnRefreshListener {
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { finish() }
 
-        render(intent.getSerializableExtra("label") as Label)
-        listOf(barcode, power, rssi).forEach { it.inputType = InputType.TYPE_NULL }
+        // disable inputs
+        listOf(
+            goodName,
+            goodBarcode,
+            labelBarcode,
+            size,
+            power,
+            rssi,
+            totalWeight,
+            goodNumber,
+            weigherPower
+        ).forEach {
+            it.inputType = InputType.TYPE_NULL
+        }
 
-        update.setOnClickListener { request(Action.UPDATE) }
-        scan.setOnClickListener { request(Action.SCAN) }
-        lightOn.setOnClickListener { request(Action.FLICK_ON) }
-        lightOff.setOnClickListener { request(Action.FLICK_OFF) }
-        getGood()
+        buttons = listOf(btn1, btn2, btn3, btn4, btn5, btn6)
+
+        val onClick = View.OnClickListener {
+            it as TextView
+            when (val action = it.text.toString()) {
+                "开灯", "关灯", "刷新", "巡检" -> operateTag(action)
+                "人工盘点" -> showInputDialog("输入商品件数") { count -> manualCount(count) }
+                "获取计量", "置零", "获取衡器电量", "去皮" -> operateWeigher(action)
+                "校准" -> showInputDialog("输入校准重量") { weight -> operateWeigher(action, weight) }
+                "显示衡器菜单", "显示标签菜单" -> switch()
+
+            }
+        }
+        buttons.forEach { it.setOnClickListener(onClick) }
+
+
+        render(intent.getSerializableExtra("label") as Label)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -70,39 +89,93 @@ class LabelInfoActivity : BaseActivity(),OnRefreshListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.unbind -> {
-                if (!label.isBound())
+                if (!label.isBound)
                     showFailTipDialog("标签未绑定")
                 else
                     unbind()
             }
-            R.id.enable -> request(Action.ENABLE)
-            R.id.disable -> request(Action.DISABLE)
-            R.id.remove -> request(Action.REMOVE)
+            R.id.enable -> operateTag("启用")
+            R.id.disable -> operateTag("禁用")
+            R.id.remove -> operateTag("移除")
         }
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onRefresh(refreshLayout: RefreshLayout) {
-        ESLS.instance.service.tag(label.id)
+    override fun onStart() {
+        super.onStart()
+        zkcScanCodeBroadcastReceiver = ZKCScanCodeBroadcastReceiver.register(this) {
+            query(it)
+        }
+    }
+
+
+    override fun onStop() {
+        unregisterReceiver(zkcScanCodeBroadcastReceiver)
+        super.onStop()
+    }
+
+
+    lateinit var buttons: List<Button>
+    private val switchMap = mapOf(
+        "开灯" to "获取计量",
+        "关灯" to "获取衡器电量",
+        "刷新" to "去皮",
+        "巡检" to "置零",
+        "人工盘点" to "校准",
+        "显示衡器菜单" to "显示标签菜单",
+
+        "获取计量" to "开灯",
+        "获取衡器电量" to "关灯",
+        "去皮" to "刷新",
+        "置零" to "巡检",
+        "校准" to "人工盘点",
+        "显示标签菜单" to "显示衡器菜单"
+    )
+
+    private fun switch() {
+        buttons.forEach {
+            it.text = switchMap[it.text]
+        }
+    }
+
+    // 查询标签
+    @SuppressLint("CheckResult")
+    private fun query(barCode: String) {
+        ESLS.instance.service.searchTag("=", 0, 1, RequestBean(listOf(QueryItem("barCode", barCode))))
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.from(mainLooper))
             .subscribe({
-                if(!it.isSuccess())
-                    throw RequestException(it.msg)
-                if(it.data.isEmpty())
-                    throw RequestException("标签不存在")
-                render(it.data.first())
-            },{
-                RequestExceptionHandler.handle(this,it)
+                if (it.data.isNotEmpty()) {
+                    render(it.data.first())
+                }
+            }, {
+                RequestExceptionHandler.handle(this, it)
             })
     }
 
-    private fun getGood() {
-        if (!label.isBound()) {
-            good.visibility= View.GONE
-            return
+    private fun checkIsComputeOpen() {
+        val isComputeOpen: Boolean = boundGood?.isComputeOpen == 1
+        listOf(totalWeight, weigherPower, btn6).forEach {
+            it.visibility = when (isComputeOpen) {
+                true -> View.VISIBLE
+                false -> View.GONE
+            }
         }
-        ESLS.instance.service.good(label.goodId!!)
+        btn6.isEnabled = isComputeOpen
+        if (!isComputeOpen) {
+            if (btn6.text != "显示衡器菜单") {
+                switch()
+            }
+        }
+    }
+
+    private fun getGood() {
+        checkIsComputeOpen()
+
+        if(!label.isBound)
+            return
+
+        ESLS.instance.service.good(label.goodId)
             .subscribeOn(Schedulers.io())
             .doOnNext {
                 if (!it.isSuccess())
@@ -112,6 +185,7 @@ class LabelInfoActivity : BaseActivity(),OnRefreshListener {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 renderGood(it)
+                checkIsComputeOpen()
             }, {
                 RequestExceptionHandler.handle(this, it)
             })
@@ -119,23 +193,90 @@ class LabelInfoActivity : BaseActivity(),OnRefreshListener {
 
 
     private fun renderGood(good: Good) {
-        name.text = "名称: ${good.name}"
-        stock.text = "库存: ${good.stock}"
-        provider.text = "供应商: ${good.provider}"
-        unit.text = "单位: ${good.unit}"
-        price.text = "原价: ${good.price}"
+        boundGood = good
+        goodName.setText(good.name)
+        goodBarcode.setText(good.barCode)
+        goodName.visibility = View.VISIBLE
+        goodBarcode.visibility = View.VISIBLE
+
     }
 
     private fun render(label: Label) {
         this.label = label
-        barcode.setText(label.barCode)
+        labelBarcode.setText(label.barCode)
         size.setText("${label.resolutionWidth} x ${label.resolutionHeight}")
-        power.setText(label.power.toString())
-        rssi.setText(label.tagRssi.toString())
+        power.setText(label.power)
+        rssi.setText(label.tagRssi)
+        totalWeight.setText(label.totalWeight)
+        goodNumber.setText(label.goodNumber.toString())
+        weigherPower.setText(label.measurePower)
+        if (label.isBound&&label.needReplenish)
+            goodNumber.setTextColor(Color.RED)
+        else
+            goodNumber.setTextColor(Color.BLACK)
+
+        goodNumber.visibility = if(label.isBound)View.VISIBLE else View.GONE
+
+        goodName.visibility = View.GONE
+        goodBarcode.visibility = View.GONE
+
+        listOf( btn3).forEach { it.visibility = if (label.isBound) View.VISIBLE else View.GONE }
+        boundGood = null
+        getGood()
+
     }
-    private fun unbind(){
+
+
+    private fun showInputDialog(title: String, action: (Int) -> Unit) {
+        val builder = QMUIDialog.EditTextDialogBuilder(this)
+        val dialog = builder
+            .setTitle(title)
+            .addAction("确定") { dialog, _ ->
+                dialog.dismiss()
+                val i = builder.editText.text.toString().toIntOrNull()
+                if (i == null)
+                    showFailTipDialog("格式错误")
+                else
+                action(i)
+            }
+            .addAction("取消") { dialog, _ ->
+                dialog.cancel()
+            }
+            .create()
+        builder.editText.keyListener = DigitsKeyListener.getInstance("1234567890")
+        dialog.show()
+    }
+
+    private fun manualCount(count: Int) {
+        val tipDialog = createLoadingTipDialog("正在保存")
+        ESLS.instance.service.manualCount(count, label.toBarcodeRequestBean())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.from(mainLooper))
+            .doOnSubscribe { disposable ->
+                tipDialog.setOnCancelListener { disposable.dispose() }
+                tipDialog.show()
+            }
+            .doFinally {
+                tipDialog.dismiss()
+            }
+            .subscribe({
+                if (!it.isSuccess())
+                    throw RequestException(it.data)
+                reload()
+                showSuccessTipDialog("保存成功")
+            }, {
+                RequestExceptionHandler.handle(this, it)
+            })
+    }
+
+
+    private fun reload() {
+        query(label.barCode.toString())
+    }
+
+    private fun unbind() {
         val tipDialog = createLoadingTipDialog("正在解除绑定")
-        ESLS.instance.service.bind("id", label.goodId!!, "id", label.id, 0)
+        ESLS.instance.service.bind("id", label.goodId.toString(), "id", label.id.toString(), 0)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.from(mainLooper))
             .doOnSubscribe { disposable ->
@@ -151,24 +292,70 @@ class LabelInfoActivity : BaseActivity(),OnRefreshListener {
                 }
                 showSuccessTipDialog(it.data)
             }, {
-                RequestExceptionHandler.handle(this,it)
+                RequestExceptionHandler.handle(this, it)
             })
     }
 
 
-    private fun request(action: Action) {
-        val actionName = action.desc
-        val tipDialog = createLoadingTipDialog("正在$actionName")
+    private fun operateWeigher(action: String, weight: Int = 0) {
+        val tipDialog = createLoadingTipDialog("正在【$action】")
+        val mode = when (action) {
+            "获取计量" -> 0
+            "置零" -> 1
+            "去皮" -> 2
+            "获取衡器电量" -> 3
+            "校准" -> 5
+            else -> -1
+        }
+        if (mode == -1) {
+            return
+        }
+        val requestBean = label.toBarcodeRequestBean()
+        val observable = ESLS.instance.service.weigher(mode, requestBean, weight)
+        observable
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.from(mainLooper))
+            .doOnSubscribe { disposable ->
+                tipDialog.setOnCancelListener { disposable.dispose() }
+                tipDialog.show()
+            }
+            .doFinally {
+                tipDialog.dismiss()
+            }
+            .subscribe({
+                if (!it.isSuccess())
+                    throw RequestException(it.data)
+                val data = parseWeigherResp(it.data)
+                val res: String = data["key"] ?: ""
+                if (it.data != "成功" && res != "成功") {
+                    throw RequestException(it.data)
+                }
+                if (data.contains("weight"))
+                    totalWeight.setText(data["Weight"])
+                if (data.contains("power")) {
+                    val power = data["power"]
+                    totalWeight.setText(power)
+                }
+                showSuccessTipDialog("【$action】成功")
+            }, {
+                RequestExceptionHandler.handle(this, it)
+            })
+    }
+
+    private fun operateTag(action: String) {
+        val tipDialog = createLoadingTipDialog("正在【$action】")
+        val requestBean = RequestBean("id", label.id.toString())
         val observable =
             with(ESLS.instance.service) {
                 when (action) {
-                    Action.FLICK_ON -> light(1, 0, RequestBean("id", label.id))
-                    Action.FLICK_OFF -> light(0, 0, RequestBean("id", label.id))
-                    Action.UPDATE -> flush(0, RequestBean("id", label.id))
-                    Action.SCAN -> scan(0, RequestBean("id", label.id))
-                    Action.ENABLE -> status(1, RequestBean("id", label.id))
-                    Action.DISABLE -> status(0, RequestBean("id", label.id))
-                    Action.REMOVE -> remove(0, RequestBean("id", label.id))
+                    "开灯" -> light(1, 0, requestBean)
+                    "关灯" -> light(0, 0, requestBean)
+                    "刷新" -> flush(0, requestBean)
+                    "巡检" -> scan(0, requestBean)
+                    "启用" -> status(1, requestBean)
+                    "禁用" -> status(0, requestBean)
+                    "移除" -> remove(0, requestBean)
+                    else -> Observable.empty()
                 }
             }
         observable
@@ -184,11 +371,11 @@ class LabelInfoActivity : BaseActivity(),OnRefreshListener {
             .subscribe({
                 val stat = it.data
                 if (stat.error) {
-                    throw RequestException("${actionName}失败")
+                    throw RequestException("【$action】失败")
                 }
-                showSuccessTipDialog("${actionName}成功")
+                showSuccessTipDialog("【$action】成功")
             }, {
-                RequestExceptionHandler.handle(this, RequestException("${actionName}失败", it))
+                RequestExceptionHandler.handle(this, it)
             })
     }
 

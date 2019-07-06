@@ -1,12 +1,11 @@
 package dev.zgmgmm.esls.activity
 
+import RequestExceptionHandler
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
-import android.view.View
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener
@@ -15,14 +14,12 @@ import dev.zgmgmm.esls.ESLS
 import dev.zgmgmm.esls.R
 import dev.zgmgmm.esls.adapter.GoodListAdapter
 import dev.zgmgmm.esls.base.BaseActivity
-import dev.zgmgmm.esls.bean.Good
+import dev.zgmgmm.esls.model.Good
 import dev.zgmgmm.esls.receiver.ZKCScanCodeBroadcastReceiver
 import dev.zgmgmm.esls.showInfoTipDialog
-import dev.zgmgmm.esls.widget.RecyclerView.OnItemClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_good_query.*
-import kotlinx.android.synthetic.main.activity_good_query.toolbar
 import org.jetbrains.anko.info
 import java.util.concurrent.TimeUnit
 
@@ -138,9 +135,9 @@ class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener 
                 val count = goods.size
                 val noMore = count < pageSize
                 if (count == 0) {
-                    if(page==0){
+                    if (page == 0) {
                         showInfoTipDialog("找不到任何商品")
-                    }else{
+                    } else {
                         showInfoTipDialog("没有更多了")
                     }
                     refreshLayout.finishLoadMoreWithNoMoreData()

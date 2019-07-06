@@ -4,18 +4,17 @@ import RequestExceptionHandler
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog
 import dev.zgmgmm.esls.*
 import dev.zgmgmm.esls.base.BaseActivity
-import dev.zgmgmm.esls.bean.Good
-import dev.zgmgmm.esls.bean.Label
-import dev.zgmgmm.esls.bean.QueryItem
-import dev.zgmgmm.esls.bean.RequestBean
 import dev.zgmgmm.esls.exception.RequestException
+import dev.zgmgmm.esls.model.Good
+import dev.zgmgmm.esls.model.Label
+import dev.zgmgmm.esls.model.QueryItem
+import dev.zgmgmm.esls.model.RequestBean
 import dev.zgmgmm.esls.receiver.ZKCScanCodeBroadcastReceiver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -223,13 +222,13 @@ class BindActivity : BaseActivity() {
 
 
     @SuppressLint("CheckResult")
-    private fun requestBind(goodBarcode: String, labelId: String, mode: Int) {
+    private fun requestBind(goodBarcode: String, labelId: Int, mode: Int) {
         val tipDialog = createLoadingTipDialog("正在请求绑定")
         ESLS.instance.service.bind(
             "barCode",
             goodBarcode,
             "id",
-            labelId,
+            labelId.toString(),
             mode
         )
             .subscribeOn(Schedulers.io())
@@ -282,8 +281,8 @@ class BindActivity : BaseActivity() {
                     throw RequestException("标签不存在")
                 }
                 val tag = it.data[0]
-                info("isBound? ${tag.isBound()}")
-                if (tag.isBound()) {
+                info("isBound? ${tag.isBound}")
+                if (tag.isBound) {
                     QMUIDialog.MessageDialogBuilder(this)
                         .setTitle("标签已被绑定，确定重新绑定")
                         .addAction("确定") { dialog: QMUIDialog, _: Int ->
@@ -297,7 +296,7 @@ class BindActivity : BaseActivity() {
                 }
             }
             .map { it.data.first() }
-            .filter { !it.isBound() }
+            .filter { !it.isBound }
             .doFinally {
                 tipDialog.dismiss()
             }

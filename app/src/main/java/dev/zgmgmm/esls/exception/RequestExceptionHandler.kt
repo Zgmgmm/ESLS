@@ -49,11 +49,11 @@ class RequestExceptionHandler {
 
         private fun handleHttpException(context: Context, exception: HttpException) {
             val tip: String
-            val json=exception.response().errorBody()?.string()
+            val json = exception.response().errorBody()?.string()
             val response = Gson().fromJson(json, Response::class.java)
-            var msg=response.data.toString()
-            if(msg.isBlank()){
-                msg="未知错误"
+            var msg = response.data.toString()
+            if (msg.isBlank()) {
+                msg = "未知错误"
             }
             tip = when (exception.code()) {
                 401 -> {

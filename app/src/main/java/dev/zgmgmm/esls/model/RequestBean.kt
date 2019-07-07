@@ -8,10 +8,10 @@ data class RequestBean(
 }
 
 
-fun Good.toRequestBean():RequestBean{
-    return RequestBean("id",id.toString())
+fun Good.toRequestBean(): RequestBean {
+    return RequestBean("id", id.toString())
 }
 
-fun Label.toBarcodeRequestBean():RequestBean{
-    return RequestBean("barCode",barCode.toString())
+fun Label.toBarcodeRequestBean(): RequestBean {
+    return RequestBean("barCode", barCode.toString())
 }

@@ -65,6 +65,14 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/unit"
         />
+        <TextView
+                android:id="@+id/shopName"
+                android:text="店名"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/barCode"
+        />
     </android.support.constraint.ConstraintLayout>
 
 </android.support.v7.widget.CardView>

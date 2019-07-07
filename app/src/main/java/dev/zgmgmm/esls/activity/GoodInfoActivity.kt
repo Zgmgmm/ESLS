@@ -7,8 +7,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
-import android.text.method.DigitsKeyListener
-import com.qmuiteam.qmui.widget.dialog.QMUIDialog
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog
 import dev.zgmgmm.esls.*
 import dev.zgmgmm.esls.base.BaseActivity
@@ -39,23 +37,7 @@ class GoodInfoActivity : BaseActivity() {
         // action bar
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { finish() }
-        val inputs = listOf(
-            name,
-            provider,
-            price,
-            unit,
-            barcode,
-            promotionReason,
-            promotePrice,
-            labels,
-            weightSpec,
-            isComputeOpen,
-            replenishNumber,
-            computeNumber
-        )
-        inputs.forEach {
-            it.inputType = InputType.TYPE_NULL
-        }
+
 
         good = intent.getSerializableExtra("good") as Good
         render(good)
@@ -71,7 +53,31 @@ class GoodInfoActivity : BaseActivity() {
 
         // 改价
         edit.setOnClickListener {
-            showInputDialog()
+            showFloatInputDialog("输入新的价格", this::save)
+        }
+
+        disableEdit()
+    }
+
+    private fun disableEdit() {
+        val inputs = listOf(
+            name,
+            provider,
+            price,
+            unit,
+            barcode,
+            promotionReason,
+            promotePrice,
+            labels,
+            weightSpec,
+            isComputeOpen,
+            replenishNumber,
+            computeNumber,
+            shopName,
+            shopNumber
+        )
+        inputs.forEach {
+            it.inputType = InputType.TYPE_NULL
         }
     }
 
@@ -88,6 +94,8 @@ class GoodInfoActivity : BaseActivity() {
         isComputeOpen.setText(good.isComputeOpen.toString())
         replenishNumber.setText(good.replenishNumber)
         computeNumber.setText(good.computeNumber)
+        shopName.setText(good.shopName)
+        shopNumber.setText(good.shopNumber)
 
         if (good.needReplenish) {
             computeNumber.setTextColor(Color.RED)
@@ -95,7 +103,7 @@ class GoodInfoActivity : BaseActivity() {
     }
 
     @SuppressLint("CheckResult")
-    fun save(newPrice: Double) {
+    fun save(newPrice: Float) {
         val modified = good.copy(price = newPrice.toString())
         val tipDialog = createLoadingTipDialog("正在改价")
 //        val loadingTipDialog = createLoadingTipDialog("改价成功，正在刷新标签")
@@ -138,23 +146,4 @@ class GoodInfoActivity : BaseActivity() {
     }
 
 
-    private fun showInputDialog() {
-        val builder = QMUIDialog.EditTextDialogBuilder(this)
-        val dialog = builder
-            .setTitle("输入新的价格")
-            .addAction("确定") { dialog, _ ->
-                dialog.dismiss()
-                val newPrice = builder.editText.text.toString().toDoubleOrNull()
-                if (newPrice == null)
-                    showFailTipDialog("格式错误")
-                else
-                    save(newPrice)
-            }
-            .addAction("取消") { dialog, _ ->
-                dialog.cancel()
-            }
-            .create()
-        builder.editText.keyListener = DigitsKeyListener.getInstance("1234567890.")
-        dialog.show()
-    }
 }

@@ -73,13 +73,11 @@ interface Service {
     fun status(@Query("mode") mode: Int, @Body requestBean: RequestBean): Observable<Response<Stat>>
 
     @POST("tag/compute")
-    fun manualCount(@Query("goodNumber") goodNumber: Int,  @Body requestBean: RequestBean): Observable<Response<String>>
-
-
+    fun manualCount(@Query("goodNumber") goodNumber: Int, @Body requestBean: RequestBean): Observable<Response<String>>
 
 
     // 电子秤
     @POST("/api/balance")
-    fun weigher(@Query("mode") mode: Int, @Body requestBean: RequestBean, @Query("weight") weight: Int?=0): Observable<Response<String>>
+    fun weigher(@Query("mode") mode: Int, @Body requestBean: RequestBean, @Query("weight") weight: Int? = 0): Observable<Response<String>>
 
 }

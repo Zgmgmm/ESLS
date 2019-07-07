@@ -55,6 +55,26 @@
             <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:theme="@style/attr_text">
+                <android.support.design.widget.TextInputEditText
+                        android:id="@+id/shopName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="店名"/>
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/attr_text">
+                <android.support.design.widget.TextInputEditText
+                        android:id="@+id/shopNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="分店编号"/>
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:theme="@style/attr_text"
             >
                 <android.support.design.widget.TextInputEditText

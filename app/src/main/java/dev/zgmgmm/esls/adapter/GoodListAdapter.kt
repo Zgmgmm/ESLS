@@ -28,7 +28,9 @@ class GoodListAdapter(private var data: List<Good>) : RecyclerView.Adapter<GoodL
             holder.provider.text = "供应商: $provider"
             holder.unit.text = "单位: $unit"
             holder.price.text = "原价: ${price.toString()}"
-            holder.barCode.text="条形码: $barCode"
+            holder.barCode.text = "条形码: $barCode"
+            holder.shopName.text = "店名: $shopName"
+
         }
         holder.view.setOnClickListener {
             GoodInfoActivity.start(
@@ -57,6 +59,8 @@ class GoodListAdapter(private var data: List<Good>) : RecyclerView.Adapter<GoodL
         var unit: TextView = itemView.findViewById(R.id.unit)
         var price: TextView = itemView.findViewById(R.id.price)
         var barCode: TextView = itemView.findViewById(R.id.barCode)
+        var shopName: TextView = itemView.findViewById(R.id.shopName)
+
     }
 
     interface OnItemClickListener {

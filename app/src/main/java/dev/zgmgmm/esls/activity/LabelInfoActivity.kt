@@ -7,17 +7,18 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
-import android.text.method.DigitsKeyListener
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import com.qmuiteam.qmui.widget.dialog.QMUIDialog
 import dev.zgmgmm.esls.*
 import dev.zgmgmm.esls.base.BaseActivity
 import dev.zgmgmm.esls.exception.RequestException
-import dev.zgmgmm.esls.model.*
+import dev.zgmgmm.esls.model.Label
+import dev.zgmgmm.esls.model.QueryItem
+import dev.zgmgmm.esls.model.RequestBean
+import dev.zgmgmm.esls.model.toBarcodeRequestBean
 import dev.zgmgmm.esls.receiver.ZKCScanCodeBroadcastReceiver
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -28,7 +29,6 @@ import kotlinx.android.synthetic.main.activity_label_info.*
 class LabelInfoActivity : BaseActivity() {
     private lateinit var zkcScanCodeBroadcastReceiver: ZKCScanCodeBroadcastReceiver
     private lateinit var label: Label
-    private var boundGood: Good? = null
 
     companion object {
         fun start(context: Context, label: Label) {
@@ -68,10 +68,10 @@ class LabelInfoActivity : BaseActivity() {
             it as TextView
             when (val action = it.text.toString()) {
                 "开灯", "关灯", "刷新", "巡检" -> operateTag(action)
-                "人工盘点" -> showInputDialog("输入商品件数") { count -> manualCount(count) }
+                "人工盘点" -> showIntegerInputDialog("输入商品件数", this::manualCount)
                 "获取计量", "置零", "获取衡器电量", "去皮" -> operateWeigher(action)
-                "校准" -> showInputDialog("输入校准重量") { weight -> operateWeigher(action, weight) }
-                "显示衡器菜单", "显示标签菜单" -> switch()
+                "校准" -> showIntegerInputDialog("输入校准重量") { weight -> operateWeigher(action, weight) }
+                "显示衡器菜单", "显示标签菜单" -> switchMenu()
 
             }
         }
@@ -132,7 +132,7 @@ class LabelInfoActivity : BaseActivity() {
         "显示标签菜单" to "显示衡器菜单"
     )
 
-    private fun switch() {
+    private fun switchMenu() {
         buttons.forEach {
             it.text = switchMap[it.text]
         }
@@ -153,8 +153,28 @@ class LabelInfoActivity : BaseActivity() {
             })
     }
 
-    private fun checkIsComputeOpen() {
-        val isComputeOpen: Boolean = boundGood?.isComputeOpen == 1
+
+    private fun render(label: Label) {
+        this.label = label
+        labelBarcode.setText(label.barCode)
+        size.setText("${label.resolutionWidth} x ${label.resolutionHeight}")
+        power.setText(label.power)
+        rssi.setText(label.tagRssi)
+        totalWeight.setText("${label.totalWeight} g")
+        goodNumber.setText(label.goodNumber.toString())
+        weigherPower.setText(label.measurePower)
+        if (label.isBound && label.needReplenish)
+            goodNumber.setTextColor(Color.RED)
+        else
+            goodNumber.setTextColor(Color.BLACK)
+
+        goodNumber.visibility = if (label.isBound) View.VISIBLE else View.GONE
+        goodName.visibility = View.GONE
+        goodBarcode.visibility = View.GONE
+
+        listOf(btn3).forEach { it.visibility = if (label.isBound) View.VISIBLE else View.GONE }
+
+        val isComputeOpen = label.isComputeOpen
         listOf(totalWeight, weigherPower, btn6).forEach {
             it.visibility = when (isComputeOpen) {
                 true -> View.VISIBLE
@@ -164,88 +184,19 @@ class LabelInfoActivity : BaseActivity() {
         btn6.isEnabled = isComputeOpen
         if (!isComputeOpen) {
             if (btn6.text != "显示衡器菜单") {
-                switch()
+                switchMenu()
             }
         }
-    }
 
-    private fun getGood() {
-        checkIsComputeOpen()
-
-        if(!label.isBound)
+        // good info
+        if (!label.isBound)
             return
-
-        ESLS.instance.service.good(label.goodId)
-            .subscribeOn(Schedulers.io())
-            .doOnNext {
-                if (!it.isSuccess())
-                    throw RequestException(it.msg)
-            }
-            .map { it.data.first() }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                renderGood(it)
-                checkIsComputeOpen()
-            }, {
-                RequestExceptionHandler.handle(this, it)
-            })
-    }
-
-
-    private fun renderGood(good: Good) {
-        boundGood = good
-        goodName.setText(good.name)
-        goodBarcode.setText(good.barCode)
+        goodName.setText(label.goodName)
+        goodBarcode.setText(label.goodBarCode)
         goodName.visibility = View.VISIBLE
         goodBarcode.visibility = View.VISIBLE
-
     }
 
-    private fun render(label: Label) {
-        this.label = label
-        labelBarcode.setText(label.barCode)
-        size.setText("${label.resolutionWidth} x ${label.resolutionHeight}")
-        power.setText(label.power)
-        rssi.setText(label.tagRssi)
-        totalWeight.setText(label.totalWeight)
-        goodNumber.setText(label.goodNumber.toString())
-        weigherPower.setText(label.measurePower)
-        if (label.isBound&&label.needReplenish)
-            goodNumber.setTextColor(Color.RED)
-        else
-            goodNumber.setTextColor(Color.BLACK)
-
-        goodNumber.visibility = if(label.isBound)View.VISIBLE else View.GONE
-
-        goodName.visibility = View.GONE
-        goodBarcode.visibility = View.GONE
-
-        listOf( btn3).forEach { it.visibility = if (label.isBound) View.VISIBLE else View.GONE }
-        boundGood = null
-        getGood()
-
-    }
-
-
-    private fun showInputDialog(title: String, action: (Int) -> Unit) {
-        val builder = QMUIDialog.EditTextDialogBuilder(this)
-        val dialog = builder
-            .setTitle(title)
-            .addAction("确定") { dialog, _ ->
-                dialog.dismiss()
-                val i = builder.editText.text.toString().toIntOrNull()
-                if (i == null)
-                    showFailTipDialog("格式错误")
-                else
-                action(i)
-            }
-            .addAction("取消") { dialog, _ ->
-                dialog.cancel()
-            }
-            .create()
-        builder.editText.keyListener = DigitsKeyListener.getInstance("1234567890")
-        dialog.show()
-    }
 
     private fun manualCount(count: Int) {
         val tipDialog = createLoadingTipDialog("正在保存")

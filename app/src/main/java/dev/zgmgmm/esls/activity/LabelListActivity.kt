@@ -24,7 +24,7 @@ class LabelListActivity : BaseActivity() {
     }
 
     private lateinit var adapter: LabelAdapter
-    private var goodId: Int=0
+    private var goodId: Int = 0
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +34,7 @@ class LabelListActivity : BaseActivity() {
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { finish() }
 
-        goodId = intent.getIntExtra("goodId",0)
+        goodId = intent.getIntExtra("goodId", 0)
         adapter = LabelAdapter(
             this@LabelListActivity,
             R.layout.list_item_label_find,
@@ -57,7 +57,12 @@ class LabelListActivity : BaseActivity() {
         adapter.labels.clear()
         adapter.notifyDataSetChanged()
         val tipDialog = createLoadingTipDialog("正在获取标签列表")
-        ESLS.instance.service.searchTag("=", 0, Integer.MAX_VALUE, RequestBean(listOf(QueryItem("goodid", goodId.toString()))))
+        ESLS.instance.service.searchTag(
+            "=",
+            0,
+            Integer.MAX_VALUE,
+            RequestBean(listOf(QueryItem("goodid", goodId.toString())))
+        )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.from(mainLooper))
             .doOnSubscribe { disposable ->

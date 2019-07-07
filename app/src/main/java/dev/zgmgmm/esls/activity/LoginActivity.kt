@@ -35,7 +35,7 @@ class LoginActivity : BaseActivity() {
         fun start(context: Context) {
             val intent = Intent(context, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-            intent.putExtra("may auto login",false)
+            intent.putExtra("may auto login", false)
 
             context.startActivity(intent)
         }
@@ -70,12 +70,12 @@ class LoginActivity : BaseActivity() {
                 auto_login.isChecked = false
         }
 
-        val mayAutoLogin=intent.getBooleanExtra("may auto login",true)
+        val mayAutoLogin = intent.getBooleanExtra("may auto login", true)
         auto_login.setOnClickListener {
             if (auto_login.isChecked)
                 remember_me.isChecked = true
         }
-        if (mayAutoLogin&&auto_login.isChecked) {
+        if (mayAutoLogin && auto_login.isChecked) {
             runOnUiThread {
                 login()
             }
@@ -126,7 +126,7 @@ class LoginActivity : BaseActivity() {
 
     @SuppressLint("CheckResult")
     private fun login() {
-        TokenInterceptor.token=""
+        TokenInterceptor.token = ""
         val user = user_input.text.toString()
         val password = password_input.text.toString()
         if (user.isBlank()) {

@@ -27,20 +27,35 @@ data class Good(
     var rfus01: String? = "",
     var rfus02: String? = "",
     var shelfNumber: String? = "",
-    var shopNumber: String? = "",
     var spec: String? = "",
     var stock: String? = "",
     var unit: String? = "",
     var waitUpdate: String? = "",
     var weightSpec: String? = "",
-
+    var shopNameAndShopNumber: String? = "_",
     var tagIdList: List<String> = emptyList()
 
-) : Serializable{
 
-    val needReplenish:Boolean
-        get(){
-            return isReplenish=="1"
+) : Serializable {
+
+    val needReplenish: Boolean
+        get() {
+            return isReplenish == "1"
         }
+
+    val shopName: String
+        get() {
+            return splitPair(shopNameAndShopNumber)[0]
+        }
+    val shopNumber: String
+        get() {
+            return splitPair(shopNameAndShopNumber)[1]
+        }
+
+    private fun splitPair(raw: String?): List<String> {
+        if (raw == null || !raw.contains("_"))
+            return listOf("", "")
+        return raw.split("_")
+    }
 }
 

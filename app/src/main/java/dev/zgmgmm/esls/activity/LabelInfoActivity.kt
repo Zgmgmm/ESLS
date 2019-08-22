@@ -15,10 +15,7 @@ import android.widget.TextView
 import dev.zgmgmm.esls.*
 import dev.zgmgmm.esls.base.BaseActivity
 import dev.zgmgmm.esls.exception.RequestException
-import dev.zgmgmm.esls.model.Label
-import dev.zgmgmm.esls.model.QueryItem
-import dev.zgmgmm.esls.model.RequestBean
-import dev.zgmgmm.esls.model.toBarcodeRequestBean
+import dev.zgmgmm.esls.model.*
 import dev.zgmgmm.esls.receiver.ZKCScanCodeBroadcastReceiver
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -29,6 +26,7 @@ import kotlinx.android.synthetic.main.activity_label_info.*
 class LabelInfoActivity : BaseActivity() {
     private lateinit var zkcScanCodeBroadcastReceiver: ZKCScanCodeBroadcastReceiver
     private lateinit var label: Label
+    private lateinit var good: Good
 
     companion object {
         fun start(context: Context, label: Label) {
@@ -57,7 +55,8 @@ class LabelInfoActivity : BaseActivity() {
             rssi,
             totalWeight,
             goodNumber,
-            weigherPower
+            weigherPower,
+            weightSpec
         ).forEach {
             it.inputType = InputType.TYPE_NULL
         }
@@ -70,7 +69,12 @@ class LabelInfoActivity : BaseActivity() {
                 "开灯", "关灯", "刷新", "巡检" -> operateTag(action)
                 "人工盘点" -> showIntegerInputDialog("输入商品件数", this::manualCount)
                 "获取计量", "置零", "获取衡器电量", "去皮" -> operateWeigher(action)
-                "校准" -> showIntegerInputDialog("输入校准重量") { weight -> operateWeigher(action, weight) }
+                "校准" -> showIntegerInputDialog("输入校准重量") { weight ->
+                    operateWeigher(
+                        action,
+                        weight
+                    )
+                }
                 "显示衡器菜单", "显示标签菜单" -> switchMenu()
 
             }
@@ -141,7 +145,12 @@ class LabelInfoActivity : BaseActivity() {
     // 查询标签
     @SuppressLint("CheckResult")
     private fun query(barCode: String) {
-        ESLS.instance.service.searchTag("=", 0, 1, RequestBean(listOf(QueryItem("barCode", barCode))))
+        ESLS.instance.service.searchTag(
+            "=",
+            0,
+            1,
+            RequestBean(listOf(QueryItem("barCode", barCode)))
+        )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.from(mainLooper))
             .subscribe({
@@ -160,8 +169,10 @@ class LabelInfoActivity : BaseActivity() {
         size.setText("${label.resolutionWidth} x ${label.resolutionHeight}")
         power.setText(label.power)
         rssi.setText(label.tagRssi)
-        totalWeight.setText("${label.totalWeight} g")
-        goodNumber.setText(label.goodNumber.toString())
+        if (label.isComputeOpen)
+            totalWeight.setText("${label.totalWeight} g")
+        weightSpec.setText(label.weightSpec)
+        goodNumber.setText(label.goodNumber)
         weigherPower.setText(label.measurePower)
         if (label.isBound && label.needReplenish)
             goodNumber.setTextColor(Color.RED)
@@ -175,7 +186,7 @@ class LabelInfoActivity : BaseActivity() {
         listOf(btn3).forEach { it.visibility = if (label.isBound) View.VISIBLE else View.GONE }
 
         val isComputeOpen = label.isComputeOpen
-        listOf(totalWeight, weigherPower, btn6).forEach {
+        listOf(weigherPower, btn6).forEach {
             it.visibility = when (isComputeOpen) {
                 true -> View.VISIBLE
                 false -> View.GONE
@@ -195,8 +206,23 @@ class LabelInfoActivity : BaseActivity() {
         goodBarcode.setText(label.goodBarCode)
         goodName.visibility = View.VISIBLE
         goodBarcode.visibility = View.VISIBLE
+        queryGood()
     }
 
+    private fun queryGood() {
+        ESLS.instance.service.good(label.goodId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.from(mainLooper))
+            .subscribe({
+                if (it.data == null || it.data.isEmpty())
+                    throw RequestException(it.data)
+                good = it.data.first()
+                weightSpec.setText(good.weightSpec)
+            }, {
+                RequestExceptionHandler.handle(this, it)
+            })
+
+    }
 
     private fun manualCount(count: Int) {
         val tipDialog = createLoadingTipDialog("正在保存")
@@ -301,7 +327,7 @@ class LabelInfoActivity : BaseActivity() {
                 when (action) {
                     "开灯" -> light(1, 0, requestBean)
                     "关灯" -> light(0, 0, requestBean)
-                    "刷新" -> flush(0, requestBean)
+                    "刷新" -> flush(requestBean)
                     "巡检" -> scan(0, requestBean)
                     "启用" -> status(1, requestBean)
                     "禁用" -> status(0, requestBean)

@@ -8,7 +8,7 @@ data class Good(
     var category: String? = "",
     var computeNumber: String? = "",
     var imageUrl: String? = "",
-    var isComputeOpen: Int = 0,
+    var isComputeOpen: String? = "",
     var isPromote: String? = "",
     var isReplenish: String? = "",
     var name: String? = "",

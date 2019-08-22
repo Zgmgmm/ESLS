@@ -10,7 +10,8 @@ import dev.zgmgmm.esls.R
 import dev.zgmgmm.esls.activity.GoodInfoActivity
 import dev.zgmgmm.esls.model.Good
 
-class GoodListAdapter(private var data: List<Good>) : RecyclerView.Adapter<GoodListAdapter.ViewHolder>() {
+class GoodListAdapter(private var data: List<Good>) :
+    RecyclerView.Adapter<GoodListAdapter.ViewHolder>() {
     var onGoodItemClickListener: OnItemClickListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.list_item_good, parent, false)

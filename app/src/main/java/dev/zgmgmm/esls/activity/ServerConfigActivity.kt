@@ -22,7 +22,12 @@ class ServerConfigActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_server_config)
         toolbar.setNavigationOnClickListener { finish() }
-        url.setText(defaultSharedPreferences.getString(Constant.Pref.API_BASE_URL, Constant.Net.DEFAULT_API_BASE_URL))
+        url.setText(
+            defaultSharedPreferences.getString(
+                Constant.Pref.API_BASE_URL,
+                Constant.Net.DEFAULT_API_BASE_URL
+            )
+        )
         timeout.setText(
             defaultSharedPreferences.getLong(
                 Constant.Pref.REQUEST_TIMEOUT,

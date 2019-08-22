@@ -8,17 +8,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import com.google.gson.Gson
 import dev.zgmgmm.esls.*
 import dev.zgmgmm.esls.base.BaseActivity
 import dev.zgmgmm.esls.exception.RequestException
 import dev.zgmgmm.esls.interceptor.TokenInterceptor
+import dev.zgmgmm.esls.model.Response
 import dev.zgmgmm.esls.model.User
-import dev.zgmgmm.esls.model.UserInfo
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
 import org.jetbrains.anko.defaultSharedPreferences
-import org.jetbrains.anko.info
+import retrofit2.HttpException
 
 class LoginActivity : BaseActivity() {
     companion object {
@@ -106,9 +107,8 @@ class LoginActivity : BaseActivity() {
         super.onSaveInstanceState(outState)
     }
 
-    private fun onLoginSuccess(user: UserInfo) {
+    private fun onLoginSuccess() {
         // TODO
-        info("login success: $user")
         defaultSharedPreferences.edit().run {
             putBoolean(Constant.Pref.REMEMBER_ME, remember_me.isChecked)
             putBoolean(Constant.Pref.AUTO_LOGIN, auto_login.isChecked)
@@ -121,7 +121,6 @@ class LoginActivity : BaseActivity() {
             }
             apply()
         }
-        startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
     }
 
     @SuppressLint("CheckResult")
@@ -154,11 +153,32 @@ class LoginActivity : BaseActivity() {
             }
             .subscribe({
                 if (it.isSuccess()) {
-                    onLoginSuccess(it.data)
+                    onLoginSuccess()
+                    startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
                 } else {
                     throw RequestException("登录失败: ${it.msg}")
                 }
             }) {
+                if (it is HttpException) {
+                    try {
+                        val resp = Gson().fromJson(
+                            it.response()?.errorBody()?.string(),
+                            Response::class.java
+                        )
+                        when (resp.code) {
+                            20015 -> {
+                                onLoginSuccess()
+                                CaptchaActivity.start(this, user, password, resp.data.toString())
+                                return@subscribe
+                            }
+                            30006 -> {
+                                this.showFailTipDialog(resp.data.toString())
+                                return@subscribe
+                            }
+                        }
+                    } catch (e: Exception) {
+                    }
+                }
                 RequestExceptionHandler.handle(this, it)
             }
     }

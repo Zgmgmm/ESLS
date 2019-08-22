@@ -312,7 +312,8 @@ class BindActivity : BaseActivity() {
     private fun renderLabel(label: Label) {
         labelInfo.run {
             find<TextView>(R.id.type).text = "屏幕类型: ${label.screenType}"
-            find<TextView>(R.id.size).text = "宽x高: ${label.resolutionWidth} X ${label.resolutionHeight}"
+            find<TextView>(R.id.size).text =
+                "宽x高: ${label.resolutionWidth} X ${label.resolutionHeight}"
             find<TextView>(R.id.state).text = "状态: ${label.state}"
             find<TextView>(R.id.power).text = "电量: ${label.power}"
             visibility = View.VISIBLE

@@ -11,26 +11,28 @@ import android.view.View
 /**
  * This RecyclerView supports item click event
  */
-class RecyclerView(context: Context, attr: AttributeSet) : android.support.v7.widget.RecyclerView(context, attr) {
+class RecyclerView(context: Context, attr: AttributeSet) :
+    android.support.v7.widget.RecyclerView(context, attr) {
     val itemClickListener = mutableListOf<OnItemClickListener>()
 
     init {
-        val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-            //长按事件
-            override fun onSingleTapUp(e: MotionEvent): Boolean {
-                val childView = findChildViewUnder(e.x, e.y)
-                if (childView != null) {
-                    val position = getChildLayoutPosition(childView)
-                    itemClickListener.forEach {
-                        it.onItemClick(
-                            childView, position, adapter?.getItemId(position) ?: -1
-                        )
+        val gestureDetector =
+            GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+                //长按事件
+                override fun onSingleTapUp(e: MotionEvent): Boolean {
+                    val childView = findChildViewUnder(e.x, e.y)
+                    if (childView != null) {
+                        val position = getChildLayoutPosition(childView)
+                        itemClickListener.forEach {
+                            it.onItemClick(
+                                childView, position, adapter?.getItemId(position) ?: -1
+                            )
+                        }
                     }
-                }
 
-                return super.onSingleTapUp(e)
-            }
-        })
+                    return super.onSingleTapUp(e)
+                }
+            })
         val simpleOnItemTouchListener = object : RecyclerView.SimpleOnItemTouchListener() {
             override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
                 return gestureDetector.onTouchEvent(e)

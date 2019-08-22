@@ -63,7 +63,12 @@ class LabelQueryActivity : BaseActivity() {
     @SuppressLint("CheckResult")
     private fun query(barCode: String) {
         val tipDialog = createLoadingTipDialog("正在查询标签")
-        ESLS.instance.service.searchTag("=", 0, 1, RequestBean(listOf(QueryItem("barCode", barCode))))
+        ESLS.instance.service.searchTag(
+            "=",
+            0,
+            1,
+            RequestBean(listOf(QueryItem("barCode", barCode)))
+        )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.from(mainLooper))
             .doOnSubscribe { disposable ->

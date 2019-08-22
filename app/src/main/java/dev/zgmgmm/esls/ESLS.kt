@@ -30,7 +30,10 @@ class ESLS : Application(), AnkoLogger {
             // 设置SmartRefreshLayout
             // 设置全局的Header构建器
             SmartRefreshLayout.setDefaultRefreshHeaderCreator { context: Context, layout: RefreshLayout ->
-                layout.setPrimaryColorsId(android.R.color.transparent, R.color.colorPrimary)//全局设置主题颜色
+                layout.setPrimaryColorsId(
+                    android.R.color.transparent,
+                    R.color.colorPrimary
+                )//全局设置主题颜色
                 ClassicsHeader.REFRESH_HEADER_PULLING = "下拉刷新"
                 ClassicsHeader.REFRESH_HEADER_REFRESHING = "正在刷新..."
                 ClassicsHeader.REFRESH_HEADER_LOADING = "正在加载..."
@@ -63,7 +66,9 @@ class ESLS : Application(), AnkoLogger {
         info("init service: baseUrl=$baseUrl timeout=$requestTimeout s")
         try {
             val client = OkHttpClient.Builder()
-                .addInterceptor(HttpLoggingInterceptor { info(it) }.apply { level = HttpLoggingInterceptor.Level.BODY })
+                .addInterceptor(HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                })
                 .addInterceptor(TokenInterceptor())
                 .connectTimeout(requestTimeout, TimeUnit.SECONDS)
                 .readTimeout(requestTimeout, TimeUnit.SECONDS)
@@ -86,9 +91,15 @@ class ESLS : Application(), AnkoLogger {
     override fun onCreate() {
         super.onCreate()
         val baseUrl =
-            defaultSharedPreferences.getString(Constant.Pref.API_BASE_URL, Constant.Net.DEFAULT_API_BASE_URL)!!
+            defaultSharedPreferences.getString(
+                Constant.Pref.API_BASE_URL,
+                Constant.Net.DEFAULT_API_BASE_URL
+            )!!
         val requestTimeout =
-            defaultSharedPreferences.getLong(Constant.Pref.REQUEST_TIMEOUT, Constant.Net.DEFAULT_REQUEST_TIMEOUT)
+            defaultSharedPreferences.getLong(
+                Constant.Pref.REQUEST_TIMEOUT,
+                Constant.Net.DEFAULT_REQUEST_TIMEOUT
+            )
         initService(baseUrl, requestTimeout)
     }
 }

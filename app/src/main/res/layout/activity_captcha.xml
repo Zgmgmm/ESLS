@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/qmui_config_color_white"
+        android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/qmui_icon_topbar_back"
+            app:title="短信验证"
+            app:titleTextColor="#fff" />
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#eee"
+                android:padding="8dp"
+                android:text="手机号"
+                android:textSize="18sp" />
+
+
+        <TextView
+                android:id="@+id/phone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:background="#eee"
+                android:padding="8dp"
+                android:text="13231231567"
+                android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="#eee"
+                android:padding="8dp"
+                android:text="验证码"
+                android:textSize="18sp" />
+
+
+        <EditText
+                android:id="@+id/captcha"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"
+                android:background="#eee"
+                android:hint="输入验证码"
+                android:maxLines="1"
+                android:padding="8dp"
+                android:textSize="18sp" />
+
+        <Button
+                android:id="@+id/send"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/qmui_config_color_white"
+                android:text="获取"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp" />
+    </LinearLayout>
+
+    <Button
+            android:id="@+id/verify"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@color/colorPrimary"
+            android:text="确定"
+            android:textColor="@color/qmui_config_color_white"
+            android:textSize="18sp" />
+
+
+</LinearLayout>

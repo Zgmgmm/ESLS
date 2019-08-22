@@ -34,6 +34,7 @@
         <activity android:name="dev.zgmgmm.esls.activity.ServerConfigActivity" />
         <activity android:name="dev.zgmgmm.esls.activity.LabelListActivity" />
         <activity android:name="dev.zgmgmm.esls.activity.CameraScanActivity"/>
+        <activity android:name="dev.zgmgmm.esls.activity.CaptchaActivity"/>
 
     </application>
 

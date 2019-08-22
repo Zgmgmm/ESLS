@@ -48,30 +48,37 @@ class RequestExceptionHandler {
         }
 
         private fun handleHttpException(context: Context, exception: HttpException) {
-            val tip: String
-            val json = exception.response().errorBody()?.string()
-            val response = Gson().fromJson(json, Response::class.java)
-            var msg = response.data.toString()
-            if (msg.isBlank()) {
-                msg = "未知错误"
-            }
-            tip = when (exception.code()) {
-                401 -> {
-                    QMUIDialog.MessageDialogBuilder(context)
-                        .setCancelable(false)
-                        .setCanceledOnTouchOutside(false)
-                        .setMessage("认证失败,请重新登录")
-                        .addAction("确定") { dialog, _ ->
-                            dialog.dismiss()
-                            LoginActivity.start(context)
-                        }
-                        .show()
-                    return
+            try {
+                val tip: String
+                val json = exception.response()?.errorBody()?.string()
+                val response = Gson().fromJson(json, Response::class.java)
+                var msg = response.data.toString()
+                if (msg.isBlank()) {
+                    msg = "未知错误"
                 }
+                tip = when (exception.code()) {
+                    400 ->
+                        msg
+                    401 -> {
+                        QMUIDialog.MessageDialogBuilder(context)
+                            .setCancelable(false)
+                            .setCanceledOnTouchOutside(false)
+                            .setMessage("认证失败,请重新登录")
+                            .addAction("确定") { dialog, _ ->
+                                dialog.dismiss()
+                                LoginActivity.start(context)
+                            }
+                            .show()
+                        return
+                    }
 
-                else -> msg
+                    else -> "服务器异常"
+
+                }
+                context.showFailTipDialog(tip)
+            } catch (e: Exception) {
+                context.showFailTipDialog("系统异常: $e")
             }
-            context.showFailTipDialog(tip)
         }
     }
 }

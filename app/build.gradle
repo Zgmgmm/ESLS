@@ -36,7 +36,7 @@ repositories {
 }
 dependencies {
     ext.anko_version = '0.10.5'
-    ext.retrofit_version='2.5.0'
+    ext.retrofit_version= '2.6.1'
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -57,7 +57,7 @@ dependencies {
     implementation group: 'org.jetbrains.anko', name: 'anko-commons', version: '0.10.8'
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
 
     // https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxandroid
     implementation group: 'io.reactivex.rxjava2', name: 'rxandroid', version: '2.1.0'
@@ -74,14 +74,18 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
 
     // Logging Interceptor
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.1.0'
 
     // load more
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-20'
 
     implementation 'com.king.zxing:zxing-lite:1.1.0'
 
-    api 'com.google.zxing:core:3.3.3'
+    api 'com.google.zxing:core:3.4.0'
+
+    // Captcha
+    implementation 'com.jyn.verificationcodeview:verificationcodeview:1.0.0'
+
 
 
 }

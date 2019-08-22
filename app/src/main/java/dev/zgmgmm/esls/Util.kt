@@ -56,10 +56,11 @@ fun Context.showIntegerInputDialog(title: String, action: (Int) -> Unit) {
 }
 
 
-fun Context.showFloatInputDialog(title: String, action: (Float) -> Unit) {
+fun Context.showFloatInputDialog(title: String, action: (Float) -> Unit, placeholder: String = "") {
     val builder = QMUIDialog.EditTextDialogBuilder(this)
     val dialog = builder
         .setTitle(title)
+        .setPlaceholder(placeholder)
         .addAction("确定") { dialog, _ ->
             dialog.dismiss()
             val f = builder.editText.text.toString().toFloatOrNull()

@@ -24,9 +24,14 @@ interface Service {
         ) count: Int = 99999
     ): Observable<Response<List<Good>>>
 
+    @GET("goods")
+    fun getGoodList(@Query("page") page: Int = 0, @Query("count") count: Int = 99999): Observable<Response<List<Good>>>
+
+
     // 搜索商品
     @POST("goods/search")
     fun searchGood(@Query("connection") connection: String, @Query("page") page: Int, @Query("count") count: Int, @Body requestBean: RequestBean): Observable<Response<List<Good>>>
+
 
     @PUT("good/update")
     fun goodUpdate(@Body requestBean: RequestBean): Observable<Response<Stat>>
@@ -42,7 +47,9 @@ interface Service {
 
     @PUT("tag/bind")
     fun bind(
-        @Query("sourceArgs1") goodAttr: String, @Query("ArgsString1") goodAttrValue: String, @Query("sourceArgs2") labelAttr: String, @Query(
+        @Query("sourceArgs1") goodAttr: String, @Query("ArgsString1") goodAttrValue: String, @Query(
+            "sourceArgs2"
+        ) labelAttr: String, @Query(
             "ArgsString2"
         ) labelAttrValue: String, @Query("mode") mode: Int
     ): Observable<Response<String>>
@@ -53,7 +60,7 @@ interface Service {
      *  DO_BY_CYCLE = 2;
      */
     @PUT("tag/flush")
-    fun flush(@Query("mode") mode: Int, @Body requestBean: RequestBean): Observable<Response<Stat>>
+    fun flush(@Body requestBean: RequestBean, @Query("mode") mode: Int = 0, @Query("isNeedWaiting") isNeedWaiting: Int = 0): Observable<Response<Stat>>
 
     /**
      *  DO_BY_TAG = 0;
@@ -79,5 +86,11 @@ interface Service {
     // 电子秤
     @POST("/api/balance")
     fun weigher(@Query("mode") mode: Int, @Body requestBean: RequestBean, @Query("weight") weight: Int? = 0): Observable<Response<String>>
+
+    @POST("/smsVerify/sendIdentifyCode")
+    fun sendCaptcha(@Body user: SMS): Observable<Response<String>>
+
+    @POST("/smsVerify/identifyCode")
+    fun identify(@Body user: SMS): Observable<Response<UserInfo>>
 
 }

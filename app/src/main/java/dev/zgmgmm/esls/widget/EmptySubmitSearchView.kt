@@ -22,15 +22,20 @@ class EmptySubmitSearchView : SearchView {
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
     override fun setOnQueryTextListener(listener: SearchView.OnQueryTextListener) {
         super.setOnQueryTextListener(listener)
         this.listener = listener
         mSearchSrcTextView = this.findViewById(android.support.v7.appcompat.R.id.search_src_text)
-        this.findViewById<View>(android.support.v7.appcompat.R.id.search_go_btn).setOnClickListener {
-            listener.onQueryTextSubmit(query.toString())
-        }
+        this.findViewById<View>(android.support.v7.appcompat.R.id.search_go_btn)
+            .setOnClickListener {
+                listener.onQueryTextSubmit(query.toString())
+            }
         mSearchSrcTextView.setOnEditorActionListener { _, _, _ ->
             listener.onQueryTextSubmit(query.toString())
             true

@@ -15,8 +15,10 @@ import dev.zgmgmm.esls.R
 import dev.zgmgmm.esls.adapter.GoodListAdapter
 import dev.zgmgmm.esls.base.BaseActivity
 import dev.zgmgmm.esls.model.Good
+import dev.zgmgmm.esls.model.Response
 import dev.zgmgmm.esls.receiver.ZKCScanCodeBroadcastReceiver
 import dev.zgmgmm.esls.showInfoTipDialog
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_good_query.*
@@ -113,7 +115,12 @@ class GoodQueryActivity : BaseActivity(), OnLoadMoreListener, OnRefreshListener 
     @SuppressLint("CheckResult")
     private fun query(showLoadingTipDialog: Boolean) {
         val page = data.size / pageSize
-        ESLS.instance.service.goods("barcode name provider", currentQuery, page, pageSize)
+        val observable: Observable<Response<List<Good>>>
+        observable = if (currentQuery.isBlank())
+            ESLS.instance.service.getGoodList(page, pageSize)
+        else
+            ESLS.instance.service.goods("barcode name provider", currentQuery, page, pageSize)
+        observable
             .timeout(10, TimeUnit.SECONDS)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.from(mainLooper))

@@ -75,7 +75,11 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
         return needRequestPermissonList
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, paramArrayOfInt: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        paramArrayOfInt: IntArray
+    ) {
         when (requestCode) {
             PERMISSON_REQUESTCODE -> if (!verifyPermissions(paramArrayOfInt)) {
                 showInfoTipDialog("请开启网络权限，否则应用将无法正常使用")

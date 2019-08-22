@@ -52,9 +52,13 @@ class GoodInfoActivity : BaseActivity() {
         }
 
         // 改价
-        edit.setOnClickListener {
-            showFloatInputDialog("输入新的价格", this::save)
+        setPrice.setOnClickListener {
+            showFloatInputDialog("输入新的价格", this::setPrice, good.price ?: "")
         }
+        setPromotePrice.setOnClickListener {
+            showFloatInputDialog("输入新的价格", this::setPromotePrice, good.promotePrice ?: "")
+        }
+
 
         disableEdit()
     }
@@ -103,7 +107,7 @@ class GoodInfoActivity : BaseActivity() {
     }
 
     @SuppressLint("CheckResult")
-    fun save(newPrice: Float) {
+    fun setPrice(newPrice: Float) {
         val modified = good.copy(price = newPrice.toString())
         val tipDialog = createLoadingTipDialog("正在改价")
 //        val loadingTipDialog = createLoadingTipDialog("改价成功，正在刷新标签")
@@ -118,12 +122,20 @@ class GoodInfoActivity : BaseActivity() {
             .doOnNext {
                 render(it.data)
                 tipDialog.dismiss()
+                good.price = newPrice.toString()
                 showSuccessTipDialog("改价成功")
 
 //                loadingTipDialog.show()
             }
             .observeOn(Schedulers.io())
-            .flatMap { return@flatMap ESLS.instance.service.goodUpdate(RequestBean("id", good.id.toString())) }
+            .flatMap {
+                return@flatMap ESLS.instance.service.goodUpdate(
+                    RequestBean(
+                        "id",
+                        good.id.toString()
+                    )
+                )
+            }
             .doOnSubscribe {
                 tipDialog.show()
             }
@@ -145,5 +157,57 @@ class GoodInfoActivity : BaseActivity() {
             })
     }
 
+
+    @SuppressLint("CheckResult")
+    fun setPromotePrice(newPrice: Float) {
+        val modified = good.copy(promotePrice = newPrice.toString())
+        val tipDialog = createLoadingTipDialog("正在改价")
+//        val loadingTipDialog = createLoadingTipDialog("改价成功，正在刷新标签")
+
+        ESLS.instance.service.good(modified)
+            .subscribeOn(Schedulers.io())
+            .doOnNext {
+                if (!it.isSuccess())
+                    throw RequestException("改价失败 ${it.data}")
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                render(it.data)
+                tipDialog.dismiss()
+                good.promotePrice = newPrice.toString()
+
+                showSuccessTipDialog("改价成功")
+
+//                loadingTipDialog.show()
+            }
+            .observeOn(Schedulers.io())
+            .flatMap {
+                return@flatMap ESLS.instance.service.goodUpdate(
+                    RequestBean(
+                        "id",
+                        good.id.toString()
+                    )
+                )
+            }
+            .doOnSubscribe {
+                tipDialog.show()
+            }
+            .delay(1, TimeUnit.SECONDS)
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .doFinally {
+                tipDialog.dismiss()
+//                loadingTipDialog.dismiss()
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                //                val stat = it.data
+//                showSuccessTipDialog(
+//                    "改价成功，刷新标签成功${stat.successNumber}个，失败${stat.sum - stat.successNumber}个",
+//                    duration = 30 * 1000
+//                )
+            }, {
+                RequestExceptionHandler.handle(this, it)
+            })
+    }
 
 }

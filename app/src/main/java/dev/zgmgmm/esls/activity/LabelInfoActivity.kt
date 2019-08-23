@@ -171,13 +171,9 @@ class LabelInfoActivity : BaseActivity() {
         rssi.setText(label.tagRssi)
         if (label.isComputeOpen)
             totalWeight.setText("${label.totalWeight} g")
-        weightSpec.setText(label.weightSpec)
+        setGoodNum((label.goodNumber?:"0").toInt())
         goodNumber.setText(label.goodNumber)
         weigherPower.setText(label.measurePower)
-        if (label.isBound && label.needReplenish)
-            goodNumber.setTextColor(Color.RED)
-        else
-            goodNumber.setTextColor(Color.BLACK)
 
         goodNumber.visibility = if (label.isBound) View.VISIBLE else View.GONE
         goodName.visibility = View.GONE
@@ -217,7 +213,7 @@ class LabelInfoActivity : BaseActivity() {
                 if (it.data == null || it.data.isEmpty())
                     throw RequestException(it.data)
                 good = it.data.first()
-                weightSpec.setText(good.weightSpec)
+                weightSpec.setText(good.weightSpec.toString())
             }, {
                 RequestExceptionHandler.handle(this, it)
             })
@@ -307,16 +303,38 @@ class LabelInfoActivity : BaseActivity() {
                 if (it.data != "成功" && res != "成功") {
                     throw RequestException(it.data)
                 }
-                if (data.contains("weight"))
-                    totalWeight.setText(data["Weight"])
+                if (data.contains("weight")) {
+                    updateWeight(data["weight"] ?: "0")
+                }
                 if (data.contains("power")) {
                     val power = data["power"]
-                    totalWeight.setText(power)
+                    weigherPower.setText(power)
                 }
                 showSuccessTipDialog("【$action】成功")
             }, {
-                RequestExceptionHandler.handle(this, it)
+                 RequestExceptionHandler.handle(this, it)
             })
+    }
+
+    private fun setGoodNum(num:Int){
+        label.goodNumber=num.toString()
+        goodNumber.setText(num.toString())
+        if (label.isBound && (label.needReplenish))
+            goodNumber.setTextColor(Color.RED)
+        else
+            goodNumber.setTextColor(Color.BLACK)
+    }
+
+    private fun updateWeight(weight: String) {
+        try {
+            label.totalWeight=weight
+            totalWeight.setText(weight)
+            val weight = weight.toInt() ?: 0
+            val weightSpec = (good.weightSpec?:"0").toInt()
+            val num =weight/ weightSpec
+            setGoodNum(num)
+        } catch (e: Exception) {
+        }
     }
 
     private fun operateTag(action: String) {

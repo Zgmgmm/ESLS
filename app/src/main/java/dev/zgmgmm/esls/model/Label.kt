@@ -27,7 +27,6 @@ data class Label(
     var tagAddress: String? = "",
     var tagRssi: String? = "",
     var totalWeight: String? = "",
-    var weightSpec: String? = "",
     var waitUpdate: String? = "",
     var goodIsComputeOpen: String? = "",
     var goodBarCodeAndName: String? = "_",

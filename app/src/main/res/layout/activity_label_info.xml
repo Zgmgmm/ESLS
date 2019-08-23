@@ -13,7 +13,7 @@
             android:background="@color/colorPrimary"
             app:navigationIcon="@drawable/qmui_icon_topbar_back"
             app:title="标签详情"
-            app:titleTextColor="#fff"></android.support.v7.widget.Toolbar>
+            app:titleTextColor="#fff" />
 
     <ScrollView
             android:layout_width="match_parent"

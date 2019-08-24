@@ -25,7 +25,6 @@ class ESLS : Application(), AnkoLogger {
 
     companion object {
         internal lateinit var instance: ESLS
-
         init {
             // 设置SmartRefreshLayout
             // 设置全局的Header构建器

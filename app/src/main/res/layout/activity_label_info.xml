@@ -180,8 +180,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@color/colorPrimary"
-                android:text="开灯"
+                android:text="刷新"
                 android:textColor="@color/qmui_config_color_white" />
+
+
 
         <Button
                 android:id="@+id/btn2"
@@ -190,7 +192,7 @@
                 android:layout_marginLeft="1dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimary"
-                android:text="关灯"
+                android:text="巡检"
                 android:textColor="@color/qmui_config_color_white" />
 
 
@@ -214,13 +216,14 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent">
 
+
         <Button
                 android:id="@+id/btn4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@color/colorPrimary"
-                android:text="刷新"
+                android:text="开灯"
                 android:textColor="@color/qmui_config_color_white" />
 
         <Button
@@ -230,7 +233,7 @@
                 android:layout_marginLeft="1dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimary"
-                android:text="巡检"
+                android:text="关灯"
                 android:textColor="@color/qmui_config_color_white" />
 
         <Button

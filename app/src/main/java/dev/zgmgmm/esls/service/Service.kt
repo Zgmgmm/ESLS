@@ -85,7 +85,7 @@ interface Service {
 
     // 电子秤
     @POST("/api/balance")
-    fun weigher(@Query("mode") mode: Int, @Body requestBean: RequestBean, @Query("weight") weight: Int? = 0): Observable<Response<String>>
+    fun weigher(@Query("mode") mode: Int, @Body requestBean: RequestBean, @Query("weight") weight: Int? = null): Observable<Response<String>>
 
     @POST("/smsVerify/sendIdentifyCode")
     fun sendCaptcha(@Body user: SMS): Observable<Response<String>>

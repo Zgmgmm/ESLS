@@ -47,6 +47,9 @@ class LoginActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         setSupportActionBar(toolbar)
+        if (VERSION=="LITE")
+            toolbar.title="ESLS-LITE"
+
         defaultSharedPreferences.run {
             user_input.setText(getString(Constant.Pref.REMEMBERED_USERNAME, null))
             password_input.setText(getString(Constant.Pref.REMEMBERED_PASSWORD, null))

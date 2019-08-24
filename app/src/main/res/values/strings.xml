@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">ESLS</string>
-    <!--<string name="default_api_base_url">http://172.26.156.205</string>-->
+    <string name="app_name">ESLS-Lite</string>
     <string name="default_api_base_url">http://172.29.40.25:8080/test/</string>
     <string name="pref_api_base_url">api_base_url</string>
     <string name="header_token">esls</string>

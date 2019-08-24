@@ -69,7 +69,7 @@ class LabelInfoActivity : BaseActivity() {
                 "开灯", "关灯", "刷新", "巡检" -> operateTag(action)
                 "人工盘点" -> showIntegerInputDialog("输入商品件数", this::manualCount)
                 "获取计量", "置零", "获取衡器电量", "去皮" -> operateWeigher(action)
-                "校准" -> showIntegerInputDialog("输入校准重量") { weight ->
+                "标定" -> showIntegerInputDialog("输入标定重量") { weight ->
                     operateWeigher(
                         action,
                         weight
@@ -86,9 +86,14 @@ class LabelInfoActivity : BaseActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_label_info, menu)
+       val menuRes=when(VERSION){
+           "LITE"->R.menu.menu_label_info_lite
+           else->R.menu.menu_label_info
+       }
+        menuInflater.inflate(menuRes, menu)
         return true
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -125,20 +130,29 @@ class LabelInfoActivity : BaseActivity() {
         "关灯" to "获取衡器电量",
         "刷新" to "去皮",
         "巡检" to "置零",
-        "人工盘点" to "校准",
+        "人工盘点" to "标定",
         "显示衡器菜单" to "显示标签菜单",
 
         "获取计量" to "开灯",
         "获取衡器电量" to "关灯",
         "去皮" to "刷新",
         "置零" to "巡检",
-        "校准" to "人工盘点",
+        "标定" to "人工盘点",
         "显示标签菜单" to "显示衡器菜单"
     )
 
     private fun switchMenu() {
         buttons.forEach {
             it.text = switchMap[it.text]
+        }
+        if (VERSION == "LITE") {
+            val disabled = listOf("置零", "去皮","标定")
+            buttons.forEach {
+                if (disabled.contains(it.text))
+                    it.visibility = View.GONE
+                else
+                    it.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -171,7 +185,7 @@ class LabelInfoActivity : BaseActivity() {
         rssi.setText(label.tagRssi)
         if (label.isComputeOpen)
             totalWeight.setText("${label.totalWeight} g")
-        setGoodNum((label.goodNumber?:"0").toInt())
+        setGoodNum(label.goodNumber  )
         goodNumber.setText(label.goodNumber)
         weigherPower.setText(label.measurePower)
 
@@ -277,7 +291,7 @@ class LabelInfoActivity : BaseActivity() {
             "置零" -> 1
             "去皮" -> 2
             "获取衡器电量" -> 3
-            "校准" -> 5
+            "标定" -> 5
             else -> -1
         }
         if (mode == -1) {
@@ -312,12 +326,14 @@ class LabelInfoActivity : BaseActivity() {
                 }
                 showSuccessTipDialog("【$action】成功")
             }, {
-                 RequestExceptionHandler.handle(this, it)
+                RequestExceptionHandler.handle(this, it)
             })
     }
 
-    private fun setGoodNum(num:Int){
-        label.goodNumber=num.toString()
+    private fun setGoodNum(num: String?) {
+        if (num.isNullOrBlank())
+            return
+        label.goodNumber = num.toString()
         goodNumber.setText(num.toString())
         if (label.isBound && (label.needReplenish))
             goodNumber.setTextColor(Color.RED)
@@ -327,12 +343,12 @@ class LabelInfoActivity : BaseActivity() {
 
     private fun updateWeight(weight: String) {
         try {
-            label.totalWeight=weight
+            label.totalWeight = weight
             totalWeight.setText(weight)
             val weight = weight.toInt() ?: 0
-            val weightSpec = (good.weightSpec?:"0").toInt()
-            val num =weight/ weightSpec
-            setGoodNum(num)
+            val weightSpec = (good.weightSpec ?: "0").toInt()
+            val num = weight / weightSpec
+            setGoodNum(num.toString())
         } catch (e: Exception) {
         }
     }
